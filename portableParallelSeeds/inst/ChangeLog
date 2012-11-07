@@ -1,0 +1,15 @@
+2012-10-30  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/seedCreator.R (update.portableSeeds): update.portableSeeds
+	method added. Scans to existing portableSeeds object, grabs last
+	saved stream initializer. Then adds more from there.
+	(update.portableSeeds): trying to make this a generic function.
+
+2012-10-24  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/initPortableStreams.R (useStream): changing verbose
+	defaults to FALSE for useSteam and initStreams
+
+	* ../man/portableParallelSeeds-package.Rd (Maintainer): insert
+	examples and other boilerplate
+
