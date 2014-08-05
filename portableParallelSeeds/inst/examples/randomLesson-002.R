@@ -26,7 +26,6 @@ cbind(t1, t2, t3, t4)
 ## It was offered in R's new parallel package for
 ## the first time in version 2.14.
 
-require(parallel) ## for nextRNGStream
 substreams <- vector("list", 5)
 substreams[[1]] <- t0
 substreams[[2]] <- nextRNGStream(t0)

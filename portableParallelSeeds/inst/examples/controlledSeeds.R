@@ -3,7 +3,6 @@
 ## 2012-11-08
 
 
-library(parallel)
 library(portableParallelSeeds)
 ##that causes environment to be set like: RNGkind("L'Ecuyer-CMRG")
 

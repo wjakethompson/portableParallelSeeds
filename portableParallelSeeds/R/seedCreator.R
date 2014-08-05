@@ -92,8 +92,10 @@ seedCreator <- function(nReps = 2000, streamsPerRep = 3, seed, file = NULL){
 ##' initializing values. This function fulfills that need.
 ##'
 ##' @param object A portableSeeds object created by seedCreator
-##' @param more An integer indicating the number of additional runs for which seeds are to be created.
-##' @param file A quoted character string representing file name into which the portableSeeds object is to be placed.
+##' @param more An integer indicating the number of additional runs
+##' for which seeds are to be created.
+##' @param file A quoted character string representing file name into
+##' which the portableSeeds object is to be placed.
 ##' @param ... Additional arguments, none of which are put to any use
 ##' @return A \code{portableSeeds} object that includes the original set, with
 ##' \code{more} seeds added to the end. The entirety of this returned set
@@ -103,7 +105,6 @@ seedCreator <- function(nReps = 2000, streamsPerRep = 3, seed, file = NULL){
 ##' @export
 ##' @rdname update.portableSeeds
 ##' @method update portableSeeds
-##' @S3method update portableSeeds
 ##' @examples
 ##' projSeeds <- seedCreator(2000, 3, seed = 123456, file = "someSeeds.rds")
 ##' projSeeds2 <- update(projSeeds, more=19, file = "somePlusSeeds.rds")
