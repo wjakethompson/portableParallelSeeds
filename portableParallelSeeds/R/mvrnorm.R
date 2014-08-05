@@ -11,12 +11,25 @@
 ##' identical. \code{MASS::mvrnorm} does not meet that requirement, but \code{MASS::mvrnorm} does.
 ##'
 ##' To assure replication, only a very small change is made. The code
-##' in \code{MASS::mvrnorm} draws a random sample and fills a matrix by column,
-##' and that matrix is then decomposed.  The change implemented here fills that matrix by row and the problem is eliminated.
+##' in \code{MASS::mvrnorm} draws a random sample and fills a matrix
+##' by column, and that matrix is then decomposed.  The change
+##' implemented here fills that matrix by row and the problem is
+##' eliminated.
 ##'
-##' Some peculiarities are noticed when the covariance matrix changes from a diagonal matrix to a more general symmetric matrix (non-zero elements off-diagonal).  When the covariance is strictly diagonal, then just one column of the simulated multivariate normal data will be replicated, but the others are not. This has very troublesome implications for simulations that draw samples of various sizes and then base calculations on the separate simulated columns (i.e., some columns are identical, others are completely uncorrelated).
+##' Some peculiarities are noticed when the covariance matrix changes
+##' from a diagonal matrix to a more general symmetric matrix
+##' (non-zero elements off-diagonal).  When the covariance is strictly
+##' diagonal, then just one column of the simulated multivariate
+##' normal data will be replicated, but the others are not. This has
+##' very troublesome implications for simulations that draw samples of
+##' various sizes and then base calculations on the separate simulated
+##' columns (i.e., some columns are identical, others are completely
+##' uncorrelated).
 ##'
-##' @seealso For an alternative multivariate normal generator function, see the function \code{\link[mvtnorm]{rmvnorm}}, in the package \code{mvtnorm}.
+##' @seealso For an alternative multivariate normal generator
+##' function, one which has had this fix applied to it,
+##' see the function \code{\link[mvtnorm]{rmvnorm}}, in the
+##' package \code{mvtnorm}.
 ##' @param n the number of samples ("rows" of data) required.
 ##' @param mu a vector giving the means of the variables.
 ##' @param Sigma positive-definite symmetric matrix specifying the
@@ -104,128 +117,3 @@ mvrnorm <-
     if(n == 1) drop(X) else t(X)
 }
 NULL
-
-##' Replication Fix for draws from a Multivariate Normal Distribution (mvtnorm style)
-##'
-##' This is the \code{\link[mvtnorm]{rmvnorm}} function from the \code{mvtnorm}
-##' package, with one small modification
-##' to facilitate replication of random samples. The aim is to make
-##' sure that, when the seed is reset to a common position, the first
-##' rows of generated data are identical no matter what value is
-##' chosen for n.  That is to say, if one generates k observations,
-##' and then re-sets the seed, and then generates n > k observations,
-##' then the first k rows in both will be identical. This may be
-##' necessary in Monte Carlo simulations that adjust the sample size,
-##' leaving other variables unchanged.
-##'
-##' @return A matrix with one column per variable, one row per draw.
-##' @import mvtnorm
-##' @export
-##' @author Friedrich Leisch and Fabian Scheipl with revision by Paul Johnson
-##' @param n Number of observations.
-##' @param mean Mean vector, default is 0 for each variable.
-##' @param sigma Covariance matrix, default is diagonal with variance equal to 1.
-##' @param method Matrix decomposition used to determine the matrix
-##' root of \code{sigma}, possible methods are eigenvalue
-##' decomposition \code{"eigen"}, default), singular value
-##' decomposition (\code{"svd"}), and Cholesky decomposition
-##' (\code{"chol"}).
-##  @seealso MASS package \code{\link[MASS]{mvrnorm}}
-##' @references
-##' Alan Genz, Frank Bretz, Tetsuhisa Miwa, Xuefei Mi, Friedrich Leisch,
-##' Fabian Scheipl, Torsten Hothorn (2012). mvtnorm: Multivariate Normal
-##' and t Distributions. R package version 0.9-9993. URL
-##' http://CRAN.R-project.org/package=mvtnorm
-##'
-##' Alan Genz, Frank Bretz (2009), Computation of Multivariate Normal and
-##' t Probabilities. Lecture Notes in Statistics, Vol. 195.,
-##' Springer-Verlage, Heidelberg. ISBN 978-3-642-01688-2
-##'
-##' @examples
-##' library(portableParallelSeeds)
-##' set.seed(12345)
-##' X0 <- mvtnorm::rmvnorm(n=10, mean = c(0,0,0), sigma = diag(3))
-##' ## create a smaller data set, starting at same position
-##' set.seed(12345)
-##' X1 <- mvtnorm::rmvnorm(n=5, mean = c(0,0,0), sigma = diag(3))
-##' ## Create a larger data set
-##' set.seed(12345)
-##' X2 <- mvtnorm::rmvnorm(n=15, mean = c(0,0,0), sigma = diag(3))
-##' ## The first 5 rows in X0, X1, and X2 are not the same
-##' X0
-##' X1
-##' X2
-##' set.seed(12345)
-##' Y0 <- mvrnorm(n=10, mu = c(0,0,0), Sigma = diag(3))
-##' set.seed(12345)
-##' Y1 <- mvrnorm(n=5, mu = c(0,0,0), Sigma = diag(3))
-##' set.seed(12345)
-##' Y2 <- mvrnorm(n=15, mu = c(0,0,0), Sigma = diag(3))
-##' # note results are the same in the first 5 rows:
-##' Y0
-##' Y1
-##' Y2
-##' identical(Y0[1:5, ], Y1[1:5, ])
-##' identical(Y1[1:5, ], Y2[1:5, ])
-##'
-##' myR <- lazyCor(X = 0.3, d = 5)
-##' mySD <- c(0.5, 0.5, 0.5, 1.5, 1.5)
-##' myCov <- lazyCov(Rho = myR, Sd = mySD)
-##'
-##' set.seed(12345)
-##' X0 <- mvtnorm::rmvnorm(n = 10, sigma = myCov)
-##' ## create a smaller data set, starting at same position
-##' set.seed(12345)
-##' X1 <-  mvtnorm::rmvnorm(n = 5, sigma = myCov)
-##' X0
-##' X1
-##' set.seed(12345)
-##' Y0 <- portableParallelSeeds::mvrnorm(n=10, mu = rep(0, 5), Sigma = myCov)
-##' ## create a smaller data set, starting at same position
-##' set.seed(12345)
-##' Y1 <- portableParallelSeeds::mvrnorm(n=5, mu = rep(0, 5), Sigma = myCov)
-##' Y0
-##' Y1
-##'
-rmvnorm <- function (n, mean = rep(0, nrow(sigma)), sigma = diag(length(mean)), method = c("eigen", "svd", "chol")) {
-    if (!isSymmetric(sigma, tol = sqrt(.Machine$double.eps),
-                     check.attributes = FALSE)) {
-        stop("sigma must be a symmetric matrix")
-    }
-    if (length(mean) != nrow(sigma)) {
-        stop("mean and sigma have non-conforming size")
-    }
-    sigma1 <- sigma
-    dimnames(sigma1) <- NULL
-    if (!isTRUE(all.equal(sigma1, t(sigma1)))) {
-        warning("sigma is numerically not symmetric")
-    }
-    method <- match.arg(method)
-    if (method == "eigen") {
-        ev <- eigen(sigma, symmetric = TRUE)
-        if (!all(ev$values >= -sqrt(.Machine$double.eps) * abs(ev$values[1]))) {
-            warning("sigma is numerically not positive definite")
-        }
-        retval <- ev$vectors %*% diag(sqrt(ev$values), length(ev$values)) %*%
-            t(ev$vectors)
-    }
-    else if (method == "svd") {
-        sigsvd <- svd(sigma)
-        if (!all(sigsvd$d >= -sqrt(.Machine$double.eps) * abs(sigsvd$d[1]))) {
-            warning("sigma is numerically not positive definite")
-        }
-        retval <- t(sigsvd$v %*% (t(sigsvd$u) * sqrt(sigsvd$d)))
-    }
-    else if (method == "chol") {
-        retval <- chol(sigma, pivot = TRUE)
-        o <- order(attr(retval, "pivot"))
-        retval <- retval[, o]
-    }
-    retval <- matrix(rnorm(n * ncol(sigma)), nrow = n, byrow = TRUE) %*% retval
-    retval <- sweep(retval, 2, mean, "+")
-    colnames(retval) <- names(mean)
-    retval
-}
-
-
-
