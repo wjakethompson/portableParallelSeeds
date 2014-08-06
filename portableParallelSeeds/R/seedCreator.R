@@ -32,6 +32,7 @@
 ##' output list will have "nReps" elements. In each of those objects
 ##' inside the list, there will be seeds to initialize "streamsPerRep"
 ##' streams.
+##'
 ##' @export seedCreator
 ##' @param nReps Number of replications for which starting seed values
 ##' are to be created.
@@ -44,7 +45,6 @@
 ##' @references L'Ecuyer, P. (1999). Good Parameters and
 ##' Implementations for Combined Multiple Recursive Random Number
 ##' Generators. Operations Research, 47(1), 159-164.
-
 ##' L'Ecuyer, P., Simard, R., Chen, E. J., & Kelton, W. D. (2002). An
 ##' Object-Oriented Random-Number Package with Many Long Streams and
 ##' Substreams. Operations Research, 50(6), 1073-1075.
@@ -61,18 +61,18 @@
 ##' unlink("fruits.rds") #delete file
 seedCreator <- function(nReps = 2000, streamsPerRep = 3, seed, file = NULL){
     RNGkind("L'Ecuyer-CMRG")
-
+    
     ## projSeeds=list of lists of stream seeds
     projSeeds <- vector(mode="list", length = nReps)
     for (i in 1:nReps) projSeeds[[i]] <- vector(mode="list", streamsPerRep)
-
+    
     if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
         runif(1) ##establishes .Random.seed
     if (!missing(seed)) set.seed(seed)
     ##Grab first seed
     s <- .Random.seed
     origSeed <- s
-
+    
     for (i in 1:nReps) {
         for (j in 1:streamsPerRep){
             projSeeds[[i]][[j]] <- s
@@ -118,26 +118,26 @@ seedCreator <- function(nReps = 2000, streamsPerRep = 3, seed, file = NULL){
 ##' identical(projSeedsNext, projSeeds2[[2001]][[1]])
 update.portableSeeds <- function(object, more, file = NULL, ...){
     RNGkind("L'Ecuyer-CMRG")
-
+    
     if ( (missing(object)) | (!class(object)== "portableSeeds") ) {
         stop("update requires an input object of type projSeeds")
     }
-
+    
     if (missing(more)){
         msg <- paste("update needs to know how many more",
                      "runs-worth of seeds you want to add to the collection")
         stop(msg)
-
+    }
     nReps <- length(object)
     streamsPerRep <- length(object[[1]])
-
+    
     s <- object[[nReps]][[streamsPerRep]]
     s <- nextRNGStream(s)
-
+    
     newSeeds <-  vector(mode="list", length = more)
     for (i in 1:more) newSeeds[[i]] <- vector(mode="list", streamsPerRep)
     object <- c(object, newSeeds)
-
+    
     for (i in (1 + nReps):(nReps + more)) {
         for (j in 1:streamsPerRep){
             object[[i]][[j]] <- s
@@ -148,5 +148,3 @@ update.portableSeeds <- function(object, more, file = NULL, ...){
     if (!is.null(file)) saveRDS(object, file)
     invisible(object)
 }
-
-

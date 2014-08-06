@@ -36,29 +36,43 @@ vech2Corr <- function(vech){
 NULL
 
 
-NULL
-
-##' Create covariance matrix from correlation and standard deviation information
+##' Create covariance matrix from correlation and standard deviation
+##' information
 ##'
-##' This is a flexible function that allows lazy R programmers to create covariance matrix. The user may be lazy because the correlation and standard deviation infomation may be supplied in a variety of formats.
+##' This is a flexible function that allows lazy R programmers to
+##' create covariance matrix. The user may be lazy because the
+##' correlation and standard deviation infomation may be supplied in a
+##' variety of formats.
 ##'
-##' @param Rho Required. May be a single value (correlation common among all variables), a vector of the lower triangular values (vech) of a correlation matrix, or a symmetric matrix of correlation coefficients.
-##' @param Sd Required. May be a single value (standard deviation common among all variables) or a vector of standard deviations, one for each variable.
-##' @param d Optional. lazyCov will try to manufacture correlation and standard deviation matrices and vectors from minimal information, but the required dimension of the final matrix may be needed when the user supplies only a single value for both Rho and Sd.
-##' @return covariance matrix suitable for input into mvrnorm.
+##' I borrowed lazyCor and lazyCov from my package rockchalk.
+##'
+##' @param Rho Required. May be a single value (correlation common
+##' among all variables), a vector of the lower triangular values
+##' (vech) of a correlation matrix, or a symmetric matrix of
+##' correlation coefficients.
+##' @param Sd Required. May be a single value (standard deviation
+##' common among all variables) or a vector of standard deviations,
+##' one for each variable.
+##' @param d Optional. Number of rows or columns. lazyCov may be able
+##' to deduce the required dimension of the final matrix from the
+##' input. However, when the user supplies only a single value for
+##' both Rho and Sd, d is necessary.
+##' @return covariance matrix.
 ##' @author <pauljohn@@ku.edu>
 ##' @export
 ##' @examples
 ##' ##correlation 0.8 for all pairs, standard deviation 1.0 of each
 ##' lazyCov(Rho = 0.8, Sd = 1.0, d = 3)
 ##' ## supply a vech (lower triangular values in a column)
-##' lazyCov(Rho = c(0.1,0.2,0.3), Sd = 1.0)
+##' lazyCov(Rho = c(0.1, 0.2, 0.3), Sd = 1.0)
 ##' ## supply vech with different standard deviations
-##' lazyCov(Rho = c(0.1,0.2,0.3), Sd = c(1.0, 2.2, 3.3))
-##' newRho <- lazyCor(c(0.5,0.6, 0.7, -0.1, -0.5, 0.2))
+##' lazyCov(Rho = c(0.1, 0.2, 0.3), Sd = c(1.0, 2.2, 3.3))
+##' newRho <- lazyCor(c(0.5, 0.6, 0.7, -0.1, 0.1, 0.2))
 ##' lazyCov(Rho = newRho, Sd = 1.0)
-##' lazyCov(Rho = newRho, Sd = c(3,4,5,6))
-lazyCov <- function(Rho, Sd, d){
+##' lazyCov(Rho = newRho, Sd = c(3, 4, 5, 6))
+lazyCov <-
+    function(Rho, Sd, d)
+{
     if (missing(Sd)) stop("lazyCov requires user to specify either a vector or a single common value for all standard deviations")
     if (missing(Rho)) stop("lazyCov requires a symmstric correlation matrix or enough information to create one, either a vech of lower triangular values or a single common correlation value")
     if (!missing(d) && (length(Sd) > 1) && (length(Sd) != d)) stop("lazyCov doesn't require a d argument, but if you provide one, it must be consistent with the length of a supplied Sd vector")
@@ -74,12 +88,15 @@ lazyCov <- function(Rho, Sd, d){
     Rho <- lazyCor(Rho, d)
 
     covMat <- diag(Sd) %*% Rho %*% diag(Sd)
+    covSVD <- svd(covMat, nu = 0, nv = 0)
+    eS <- eigen(covMat, symmetric = TRUE, only.values = TRUE)
+    ev <- eS$values
+    tol <- 1e-6
+    if(!all(ev >= -tol*abs(ev[1L]))) stop("'covMat' is not positive definite")
     covMat
 }
 
-
-
-
+NULL
 
 ##' Create correlation matrices.
 ##'
@@ -87,9 +104,10 @@ lazyCov <- function(Rho, Sd, d){
 ##' all variables), a column of the lower triangular values for a
 ##' correlation matrix, or a candidate matrix. The function will check
 ##' X and do the right thing. If X is a matrix, check that it
-## is a valid correlation matrix. If its a single value, use that
-## to fill up a matrix. If itis a vector, try to use it as a vech
-## to fill the lower triangle..
+##' is a valid correlation matrix. If its a single value, use that
+##' to fill up a matrix. If itis a vector, try to use it as a vech
+##' to fill the lower triangle..
+##'
 ##' @param X Required. May be one value, a vech, or a matrix
 ##' @param d Optional. The number of rows in the correlation matrix to
 ##' be created. lazyCor will deduce the desired size from X if
@@ -101,13 +119,14 @@ lazyCov <- function(Rho, Sd, d){
 ##' lazyCor(0.5, 8)
 ##' lazyCor(c(0.1, 0.2, 0.3))
 ##' lazyCor(c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6))
-##' lazyCor(c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.10))
-lazyCor <- function(X, d) {
+lazyCor <-
+    function(X, d)
+{
     if (is.matrix(X)){
         stopifnot (isSymmetric(X))
         if (!dim(X)[1] == d) stop("lazyCor: the dimension of the matrix supplied is inconsistent with the dimension argument d")
     } else if (length(X) == 1) {
-        if ( X < -1 | X > 1 ) stop(paste("The value of of a correlation should be in [-1,1]"))
+        if ( X < -1 | X > 1 ) stop(paste("The value of a correlation should be in [-1,1]"))
         X <- matrix(X, nrow = d, ncol = d)
         diag(X) <- 1.0
     } else if (is.vector(X)){
@@ -115,6 +134,28 @@ lazyCor <- function(X, d) {
     } else {
         stop(paste("lazyCor cannot understand the value supplied for argument", deparse(substitute(X)),".\n That should be either a", d, " x ", d, "symmetric matrix, \n or a vech of the strictly lower triangular part of a matrix, or \n one single value, which we will use to fill up a matrix."))
     }
+    if (!checkPosDef(X)) stop("'correlation matrix' is not positive definite")
     X
 }
+NULL
 
+
+
+
+##' Check a matrix for positive definitness
+##'
+##' Uses eigen to check positive definiteness. Follows example used
+##' in \code{MASS} package by W. N. Venables and Brian D. Ripley
+##'
+##' @param X A matrix
+##' @param tol Tolerance (closeness to 0 required to declare failure)
+##' @return TRUE or FALSE
+##' @author Paul E. Johnson <pauljohn@@ku.edu>
+checkPosDef <-
+    function(X, tol = 1e-6)
+{
+    evalues <- eigen(X, only.values = TRUE)$values
+    res <- if(!all(evalues >= -tol*abs(evalues[1L]))) FALSE else TRUE
+    res
+}
+NULL
