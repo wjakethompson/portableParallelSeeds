@@ -40,10 +40,20 @@ identical. \code{MASS::mvrnorm} does not meet that requirement, but \code{MASS::
 }
 \details{
 To assure replication, only a very small change is made. The code
-in \code{MASS::mvrnorm} draws a random sample and fills a matrix by column,
-and that matrix is then decomposed.  The change implemented here fills that matrix by row and the problem is eliminated.
+in \code{MASS::mvrnorm} draws a random sample and fills a matrix
+by column, and that matrix is then decomposed.  The change
+implemented here fills that matrix by row and the problem is
+eliminated.
 
-Some peculiarities are noticed when the covariance matrix changes from a diagonal matrix to a more general symmetric matrix (non-zero elements off-diagonal).  When the covariance is strictly diagonal, then just one column of the simulated multivariate normal data will be replicated, but the others are not. This has very troublesome implications for simulations that draw samples of various sizes and then base calculations on the separate simulated columns (i.e., some columns are identical, others are completely uncorrelated).
+Some peculiarities are noticed when the covariance matrix changes
+from a diagonal matrix to a more general symmetric matrix
+(non-zero elements off-diagonal).  When the covariance is strictly
+diagonal, then just one column of the simulated multivariate
+normal data will be replicated, but the others are not. This has
+very troublesome implications for simulations that draw samples of
+various sizes and then base calculations on the separate simulated
+columns (i.e., some columns are identical, others are completely
+uncorrelated).
 }
 \examples{
 library(portableParallelSeeds)
@@ -99,6 +109,9 @@ Venables, W. N. & Ripley, B. D. (2002) Modern Applied Statistics with
 S. Fourth Edition. Springer, New York. ISBN 0-387-95457-0
 }
 \seealso{
-For an alternative multivariate normal generator function, see the function \code{\link[mvtnorm]{rmvnorm}}, in the package \code{mvtnorm}.
+For an alternative multivariate normal generator
+function, one which has had this fix applied to it,
+see the function \code{\link[mvtnorm]{rmvnorm}}, in the
+package \code{mvtnorm}.
 }
 

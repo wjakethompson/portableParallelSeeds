@@ -33,18 +33,21 @@
 ##' inside the list, there will be seeds to initialize "streamsPerRep"
 ##' streams.
 ##' @export seedCreator
-##' @param nReps Number of replications for which starting seed values are to be created.
+##' @param nReps Number of replications for which starting seed values
+##' are to be created.
 ##' @param streamsPerRep Number of streams to be created for each separate simulation.
 ##' @param seed An integer seed value that can be used to initialize the creation of the many-separate-substreams.
 ##' @param file The file name in which the list of stream seeds is to be collected, by default, that file is called "projSeeds.rds".
-##' @return A list that includes "nReps" elements. Each element is a
-##' vector of "streamsPerRep" stream starting values.
+##' @return A list that includes "nReps" elements. Each element is a vector of "streamsPerRep" stream starting values.
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##' @seealso snowft, streams, parallel
-##' @references
-##' L'Ecuyer, P. (1999). Good Parameters and Implementations for Combined Multiple Recursive Random Number Generators. Operations Research, 47(1), 159-164.
+##' @references L'Ecuyer, P. (1999). Good Parameters and
+##' Implementations for Combined Multiple Recursive Random Number
+##' Generators. Operations Research, 47(1), 159-164.
 
-##' L'Ecuyer, P., Simard, R., Chen, E. J., & Kelton, W. D. (2002). An Object-Oriented Random-Number Package with Many Long Streams and Substreams. Operations Research, 50(6), 1073-1075.
+##' L'Ecuyer, P., Simard, R., Chen, E. J., & Kelton, W. D. (2002). An
+##' Object-Oriented Random-Number Package with Many Long Streams and
+##' Substreams. Operations Research, 50(6), 1073-1075.
 ##' @examples
 ##' projSeeds <- seedCreator(2000, 3, seed = 123456, file = "fruits.rds")
 ##' A1 <- projSeeds[[787]]
@@ -57,8 +60,6 @@
 ##' identical(A1, B1) # check
 ##' unlink("fruits.rds") #delete file
 seedCreator <- function(nReps = 2000, streamsPerRep = 3, seed, file = NULL){
-    require(parallel)
-
     RNGkind("L'Ecuyer-CMRG")
 
     ## projSeeds=list of lists of stream seeds
@@ -116,14 +117,16 @@ seedCreator <- function(nReps = 2000, streamsPerRep = 3, seed, file = NULL){
 ##' projSeedsNext <- nextRNGStream(projSeedsLast)
 ##' identical(projSeedsNext, projSeeds2[[2001]][[1]])
 update.portableSeeds <- function(object, more, file = NULL, ...){
-    require(parallel)
     RNGkind("L'Ecuyer-CMRG")
 
     if ( (missing(object)) | (!class(object)== "portableSeeds") ) {
         stop("update requires an input object of type projSeeds")
     }
 
-    if (missing(more)) stop("update needs to know how many more runs-worth of seeds you want to add to the collection")
+    if (missing(more)){
+        msg <- paste("update needs to know how many more",
+                     "runs-worth of seeds you want to add to the collection")
+        stop(msg)
 
     nReps <- length(object)
     streamsPerRep <- length(object[[1]])

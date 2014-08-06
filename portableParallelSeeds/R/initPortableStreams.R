@@ -94,13 +94,13 @@ getCurrentStream <- function(){
 ##' to extract that information and then pass it along to other
 ##' functions that do not use the built-in R random generator framework.
 ##'
-##' @export getState
 ##' @return Integer index value of currently selected stream
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##' @param stream Optional. Selects a particular stream's state.  If no value is supplied, then the list including all of the stream states is supplied.
 ##' @param origin If FALSE (default), return the current, updated state of one or all random stream. If TRUE, return the initial stream states.
+##' @export
 ##' @examples
-##' mySeeds <- seedCreator(500, 5, file="mySeeds.rds", seed = 123123)
+##' mySeeds <- seedCreator(500, 5, file = "mySeeds.rds", seed = 123123)
 ##' initPortableStreams(mySeeds, run = 17)
 ##  runif(2)
 ##' getCurrentStream()
@@ -177,7 +177,6 @@ getState <- function(stream, origin = FALSE){
 ##' @example inst/examples/pps-ex.R
 
 initPortableStreams <- function(projSeeds, run, verbose = FALSE){
-    require(parallel)
     RNGkind("L'Ecuyer-CMRG")
 
     if (missing(projSeeds)) {
@@ -225,7 +224,6 @@ initPortableStreams <- function(projSeeds, run, verbose = FALSE){
 ##' @seealso \code{initPortableStreams} performs the same service, but it does the additional work of finding the correct element for a given run within a seed collection; \code{seedCreator} to generate the a seed collection; \code{useStream} to change from one stream to another.
 ##' @example inst/examples/pps-ex-2.R
 setSeedCollection <- function(runSeeds, currentStream = 1L, verbose = FALSE){
-    require(parallel)
     RNGkind("L'Ecuyer-CMRG")
 
     if (missing(runSeeds)) {
