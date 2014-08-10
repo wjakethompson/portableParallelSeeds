@@ -32,25 +32,25 @@ useStream <- function(n = NULL, origin = FALSE, verbose = FALSE){
       get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
     else stop("in useStream, .Random.seed was NULL")
   ## get local copies of currentStream, currentStates
-  curStream <- get("currentStream", envir = .GlobalEnv, inherits = FALSE)
-  curStates <- get("currentStates", envir = .GlobalEnv, inherits = FALSE)
+  curStream <- get("currentStream", envir = .pps, inherits = FALSE)
+  curStates <- get("currentStates", envir = .pps, inherits = FALSE)
 
   if (n > length(curStates)) stop("requested stream does not exist")
   curStates[[curStream]] <- oldseed
   if (origin) {
-    strtStates <- get("startStates", envir = .GlobalEnv, inherits = FALSE)
+    strtStates <- get("startStates", envir = .pps, inherits = FALSE)
     assign(".Random.seed", strtStates[[n]], envir = .GlobalEnv)
   } else {
     assign(".Random.seed", curStates[[n]], envir = .GlobalEnv)
   }
-  ## put currentStream and currentStates back to .GlobalEnv
+  ## put currentStream and currentStates back to .pps
 
-  assign("currentStream", n, envir = .GlobalEnv)
-  assign("currentStates", curStates, envir = .GlobalEnv)
+  assign("currentStream", n, envir = .pps)
+  assign("currentStates", curStates, envir = .pps)
   if (verbose){
     print("useStream useStream useStream useStream")
     print("CurrentStream CurrentStream CurrentStream")
-    print( get("currentStream", envir = .GlobalEnv, inherits = FALSE) )
+    print( get("currentStream", envir = .pps, inherits = FALSE) )
     print("Current .Random.seed")
     print(.Random.seed)
   }
@@ -79,7 +79,7 @@ getCurrentStream <- function(){
         get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
     else stop("in useStream, .Random.seed was NULL")
     ## get local copies of currentStream, currentStates
-    curStream <- get("currentStream", envir = .GlobalEnv, inherits = FALSE)
+    curStream <- get("currentStream", envir = .pps, inherits = FALSE)
     curStream
 }
 
@@ -115,15 +115,15 @@ getState <- function(stream, origin = FALSE){
     else stop("in useStream, .Random.seed was NULL")
     ## get local copies of currentStream, currentStates
     if (origin == TRUE){
-        if (exists("startStates", envir = .GlobalEnv, inherits = FALSE))
-            states <- get("startStates", envir = .GlobalEnv, inherits = FALSE)
+        if (exists("startStates", envir = .pps, inherits = FALSE))
+            states <- get("startStates", envir = .pps, inherits = FALSE)
         else stop("startStates is not found in the environment.  Did you damage it?")
         if (missing(stream)) return(states)
         else if (length(states) >= stream) return (states[[stream]])
         else stop("In initPortableSeeds, function getState: requested stream does not exist")
     } else {
-        if (exists("currentStates", envir = .GlobalEnv, inherits = FALSE))
-            states <- get("currentStates", envir = .GlobalEnv, inherits = FALSE)
+        if (exists("currentStates", envir = .pps, inherits = FALSE))
+            states <- get("currentStates", envir = .pps, inherits = FALSE)
         else stop("currentStates is not found in the environment.  Did you damage it?")
 
         if (missing(stream)) return(states)
@@ -175,10 +175,10 @@ getState <- function(stream, origin = FALSE){
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##' @seealso \code{seedCreator} to generate the input file for this function and \code{useStream} to change from one stream to another.
 ##' @example inst/examples/pps-ex.R
-
 initPortableStreams <- function(projSeeds, run, verbose = FALSE){
     RNGkind("L'Ecuyer-CMRG")
-
+   
+    if (!is.environment(.pps)) .pps <- new.env(parent = emptyenv())
     if (missing(projSeeds)) {
         stop("initPortableStreams requires a seed object in order to initialize the random streams")
     } else if (is.character(projSeeds)){
@@ -192,16 +192,16 @@ initPortableStreams <- function(projSeeds, run, verbose = FALSE){
     if (missing(run)) stop("run must be specified. Which replication is to be re-initialized?")
    ## if (length(projSeeds) < run) stop(paste("The project seed object does not include enough elements to draw the one you are asking for. The seed object includes only ", length(projSeeds), " objects."))
   runSeeds <- projSeeds[[run]]
-  assign("currentStream",  1L, envir = .GlobalEnv)
-  assign("startStates", runSeeds, envir = .GlobalEnv)
-  assign("currentStates", runSeeds, envir = .GlobalEnv)
+  assign("currentStream",  1L, envir = .pps)
+  assign("startStates", runSeeds, envir = .pps)
+  assign("currentStates", runSeeds, envir = .pps)
   assign(".Random.seed", runSeeds[[1L]],  envir = .GlobalEnv)
   if (verbose){
     print(paste("initPortableStreams, Run = ", run))
     print(.Random.seed)
-    print(paste("CurrentStream =", get("currentStream", envir = .GlobalEnv, inherits = FALSE)))
+    print(paste("CurrentStream =", get("currentStream", envir = .pps, inherits = FALSE)))
     print("All Current States")
-    print(paste(get("currentStates", envir = .GlobalEnv, inherits = FALSE)))
+    print(paste(get("currentStates", envir = .pps, inherits = FALSE)))
   }
 }
 
@@ -226,6 +226,8 @@ initPortableStreams <- function(projSeeds, run, verbose = FALSE){
 setSeedCollection <- function(runSeeds, currentStream = 1L, verbose = FALSE){
     RNGkind("L'Ecuyer-CMRG")
 
+    if (!is.environment(.pps)) .pps <- new.env(parent = emptyenv())    
+
     if (missing(runSeeds)) {
         stop("setStreamCollection requires a seed object in order to initialize the random streams")
     }
@@ -233,15 +235,15 @@ setSeedCollection <- function(runSeeds, currentStream = 1L, verbose = FALSE){
     ##TODO: find out what checks on the runSeeds elements are necessary.
     ## Should check each first element is 407? Make sure length of each is 7?
     ##
-    assign("currentStream",  as.integer(currentStream), envir = .GlobalEnv)
-    assign("startStates", runSeeds, envir = .GlobalEnv)
-    assign("currentStates", runSeeds, envir = .GlobalEnv)
-    assign(".Random.seed", runSeeds[[1L]],  envir = .GlobalEnv)
+    assign("currentStream",  as.integer(currentStream), envir = .pps)
+    assign("startStates", runSeeds, envir = .pps)
+    assign("currentStates", runSeeds, envir = .pps)
+    assign(".Random.seed", runSeeds[[1L]],  envir = .pps)
     if (verbose){
         print(paste("setStreamCollection"))
         print(.Random.seed)
-        print(paste("CurrentStream =", get("currentStream", envir = .GlobalEnv, inherits = FALSE)))
+        print(paste("CurrentStream =", get("currentStream", envir = .pps, inherits = FALSE)))
         print("All Current States")
-        print(paste(get("currentStates", envir = .GlobalEnv, inherits = FALSE)))
+        print(paste(get("currentStates", envir = .pps, inherits = FALSE)))
   }
 }
