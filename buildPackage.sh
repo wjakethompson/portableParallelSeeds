@@ -67,4 +67,4 @@ fi
 echo "Consider scp ${PACKAGE}_${VERSION}.tar.gz hpc.quant.ku.edu:/tools/kran/src/contrib"
 echo "Consider sending to win builder"
 echo "Consider uploading windows version"
-echo  "scp portableParallelSeeds_0.6.0.zip hpc.quant.ku.edu:/tools/kran/bin/windows/contrib/2.15"
+echo  "scp portableParallelSeeds_${VERSION}.zip hpc.quant.ku.edu:/tools/kran/bin/windows/contrib/2.15"

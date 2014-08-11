@@ -178,7 +178,6 @@ getState <- function(stream, origin = FALSE){
 initPortableStreams <- function(projSeeds, run, verbose = FALSE){
     RNGkind("L'Ecuyer-CMRG")
    
-    if (!exists(".pps", mode = "environment")) .pps <- new.env()
     if (missing(projSeeds)) {
         stop("initPortableStreams requires a seed object in order to initialize the random streams")
     } else if (is.character(projSeeds)){
@@ -225,8 +224,6 @@ initPortableStreams <- function(projSeeds, run, verbose = FALSE){
 ##' @example inst/examples/pps-ex-2.R
 setSeedCollection <- function(runSeeds, currentStream = 1L, verbose = FALSE){
     RNGkind("L'Ecuyer-CMRG")
-
-    if (!is.environment(.pps)) .pps <- new.env(parent = emptyenv())    
 
     if (missing(runSeeds)) {
         stop("setStreamCollection requires a seed object in order to initialize the random streams")
