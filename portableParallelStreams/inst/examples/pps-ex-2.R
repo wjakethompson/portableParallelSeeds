@@ -1,4 +1,4 @@
-library(portableParallelSeeds)
+library(portableParallelStreams)
 
 projSeeds <- seedCreator(50, 3, seed = 123456)
 A1 <- projSeeds[[27]]
@@ -11,7 +11,7 @@ runOneSimulation <- function(streams, N, m, sd, beta = c(0.3, 0.2, 0.1))
 {
     setSeedCollection(streams)
     
-    datX <- portableParallelSeeds::mvrnorm(N,
+    datX <- portableParallelStreams::mvrnorm(N,
                                            mu = rep(m, 3),
                                            Sigma = sd * diag(3))
     colnames(datX) <- c("X1", "X2", "X3")

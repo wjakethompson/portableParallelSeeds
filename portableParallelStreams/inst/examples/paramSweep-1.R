@@ -6,15 +6,15 @@
 ## of sampling distributions (which is an extremely popular topic
 ## among my students).
 
-library(portableParallelSeeds)
+library(portableParallelStreams)
 
-## genData uses mvrnorm from portableParallelSeeds, which
+## genData uses mvrnorm from portableParallelStreams, which
 ## means that if you re-set the random stream at the origin
 ## and draw N cases, and then draw N+k cases, the first N
 ## rows will be the same in each dataframe.
 genData <- function(run, seeds, parm){
     initPortableStreams(seeds, run = run)
-    dat <- portableParallelSeeds::mvrnorm(parm$N, mu=c(0,0), Sigma=diag(2))
+    dat <- portableParallelStreams::mvrnorm(parm$N, mu=c(0,0), Sigma=diag(2))
     dat <- as.data.frame(dat)
     names(dat) <- c("x1", "x2")
     useStream(2)

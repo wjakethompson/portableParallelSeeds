@@ -56,7 +56,6 @@ columns (i.e., some columns are identical, others are completely
 uncorrelated).
 }
 \examples{
-library(portableParallelSeeds)
 set.seed(12345)
 X0 <- MASS::mvrnorm(n=10, mu = c(0,0,0), Sigma = diag(3))
 ## create a smaller data set, starting at same position
@@ -94,10 +93,10 @@ X1 <- MASS::mvrnorm(n=5, mu = rep(0, 5), Sigma = myCov)
 X0
 X1
 ##' set.seed(12345)
-Y0 <- portableParallelSeeds::mvrnorm(n=10, mu = rep(0, 5), Sigma = myCov)
+Y0 <- portableParallelStreams::mvrnorm(n=10, mu = rep(0, 5), Sigma = myCov)
 ## create a smaller data set, starting at same position
 set.seed(12345)
-Y1 <- portableParallelSeeds::mvrnorm(n=5, mu = rep(0, 5), Sigma = myCov)
+Y1 <- portableParallelStreams::mvrnorm(n=5, mu = rep(0, 5), Sigma = myCov)
 Y0
 Y1
 }

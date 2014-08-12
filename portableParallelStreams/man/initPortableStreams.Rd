@@ -50,7 +50,7 @@ the first element of currentStates is taken as the state of the
 random generator).
 }
 \examples{
-library(portableParallelSeeds)
+library(portableParallelStreams)
 
 projSeeds <- seedCreator(2000, 3, seed = 123456, file = "fruits.rds")
 A1 <- projSeeds[[787]]

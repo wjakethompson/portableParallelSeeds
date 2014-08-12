@@ -1,4 +1,4 @@
-Package: portableParallelSeeds
+Package: portableParallelStreams
 Maintainer: Paul E. Johnson <pauljohn@ku.edu>
 License: GPL ( >= 2)
 Title: Allow replication of simulations on parallel and serial
@@ -20,7 +20,7 @@ Description: Creates, saves, reloads, and selects among streams of
     saved seeds are properly put to user when a particular run is to be
     executed. This framework allows each "run" to draw from several
     separate streams of random numbers.
-Version: 0.91
+Version: 0.92
 Repository: CRAN
 Date: 2014-08-10
 Depends:

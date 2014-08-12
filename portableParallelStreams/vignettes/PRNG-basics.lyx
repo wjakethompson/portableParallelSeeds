@@ -173,9 +173,9 @@ Paul E.
 \end_layout
 
 \begin_layout Abstract
-While working on the R package portableParallelSeeds, I realized that there
- are a lot of little details about pseudo random generators that are not
- well understood.
+While working on the R package portableParallelStreams, I realized that
+ there are a lot of little details about pseudo random generators that are
+ not well understood.
  
 \end_layout
 
@@ -557,8 +557,8 @@ MT19937's internal state
 
 \begin_layout Standard
 In order to understand the way R implements the various PRNGs, and thus
- the way portableParallelSeeds works, it is important to explore what happens
- to the internal state of the generator as we draw random numbers.
+ the way portableParallelStreams works, it is important to explore what
+ happens to the internal state of the generator as we draw random numbers.
  
 \end_layout
 
@@ -1714,8 +1714,8 @@ status open
 
 \begin_layout Plain Layout
 A routine generates 10,000 gamma values while tracking the number of values
- drawn from the random generator for each is included with portableParallelSeeds
- in the examples folder (gamma_draws.R).
+ drawn from the random generator for each is included with portableParallelStrea
+ms in the examples folder (gamma_draws.R).
  
 \end_layout
 
@@ -1925,7 +1925,7 @@ status open
 
 \begin_layout Plain Layout
 
-library(portableParallelSeeds)
+library(portableParallelStreams)
 \end_layout
 
 \begin_layout Plain Layout
@@ -1935,7 +1935,7 @@ set.seed(12345)
 
 \begin_layout Plain Layout
 
-Y0 <- portableParallelSeeds::mvrnorm(n=10, mu = c(0,0,0), Sigma = diag(3))
+Y0 <- portableParallelStreams::mvrnorm(n=10, mu = c(0,0,0), Sigma = diag(3))
 \end_layout
 
 \begin_layout Plain Layout
@@ -1950,7 +1950,7 @@ set.seed(12345)
 
 \begin_layout Plain Layout
 
-Y1 <- portableParallelSeeds::mvrnorm(n=5, mu = c(0,0,0), Sigma = diag(3))
+Y1 <- portableParallelStreams::mvrnorm(n=5, mu = c(0,0,0), Sigma = diag(3))
 \end_layout
 
 \begin_layout Plain Layout
@@ -1975,7 +1975,7 @@ rnorm(1)
 
 \begin_layout Plain Layout
 
-Y2 <- portableParallelSeeds::mvrnorm(n=15, mu = c(0,0,0), Sigma = diag(3))
+Y2 <- portableParallelStreams::mvrnorm(n=15, mu = c(0,0,0), Sigma = diag(3))
 \end_layout
 
 \begin_layout Plain Layout

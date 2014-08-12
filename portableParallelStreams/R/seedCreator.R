@@ -1,5 +1,5 @@
 ## Paul E. Johnson <pauljohn@ku.edu>
-## Portable Parallel Seeds Project.
+## Portable Parallel Streams Project.
 
 
 ##' Creates a portable sets of seeds to be used for replication of
