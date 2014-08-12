@@ -25,7 +25,7 @@ runOneSimulation <- function(streams, N, m, sd, beta = c(0.3, 0.2, 0.1))
     datX$Y2 <- rpois(N, lambda = exp(eta))
     lm2 <- lm(Y2 ~ X1 + X2 + X3, data = datX)
     lm3 <- lm(log(Y2+0.5) ~ X1 + X2 + X3, data = datX)
-    glm3 <- glm(Y2 ~ X1 + X2 + X3,  data = datX, family = poisson(link="log"))
+    glm3 <- glm(Y2 ~ X1 + X2 + X3,  data = datX, family = poisson(link = "log"))
     list("lm1" = lm1, "lm2" = lm2, "lm3" = lm3, "glm3" = glm3)
 }
 

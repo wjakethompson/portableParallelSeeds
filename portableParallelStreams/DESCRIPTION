@@ -9,7 +9,7 @@ Description: Creates, saves, reloads, and selects among streams of
     random numbers.  This implements one approach for exact replication
     of simulations that are conducted on different compute systems.
     From a batch of thousands of simulations, one can select any
-    arbritray "run" of the model and re-initialize it (replicate it) in
+    arbitrary "run" of the model and re-initialize it (replicate it) in
     isolation. Why is this useful? Suppose a simulation requires an
     exercise to be conducted 2000 times for various randomly-generated
     data. We want to be sure we get the same results if we run that in

@@ -87,7 +87,7 @@ runOneSimulation <- function(run, streamsource, N, m, sd){
     c("datXmean" = datXmean, "datYmean" = datYmean, "datXplusOne" = datXplusOne)
 }
 
-
+\donttest{
 ## Give seed collection object to each simulation, let each pick desired seed
 serial1 <- lapply(1:1000, runOneSimulation, projSeeds, N=800, m = 14, sd = 10.1)
 
@@ -121,6 +121,7 @@ serial1[[912]]
 ## series.
 
 unlink("fruits.rds") #delete file
+}
 }
 \author{
 Paul E. Johnson <pauljohn@ku.edu>

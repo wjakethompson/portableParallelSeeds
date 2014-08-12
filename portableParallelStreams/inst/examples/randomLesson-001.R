@@ -158,7 +158,7 @@ get(".Random.seed", envir = .GlobalEnv)[1 : 10]
 ## place a value into an environment. Rather than
 ## assigning .Random.seed with <-, this way is safer.
 
-assign("Random.seed", s1, envir=.GlobalEnv)
+assign("Random.seed", s1, envir = .GlobalEnv)
 
 runif(1)
 
