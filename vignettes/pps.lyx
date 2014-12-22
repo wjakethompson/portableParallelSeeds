@@ -2,18 +2,16 @@
 \lyxformat 413
 \begin_document
 \begin_header
-\textclass sweavel-article
+\textclass scrartcl
 \begin_preamble
 %\VignetteIndexEntry{pps}
 
-%%\usepackage[noae]{Sweavel}
+\usepackage{Sweavel}
 \usepackage{graphicx}
 \usepackage{color}
 
 \usepackage{babel}
 \usepackage[samesize]{cancel}
-
-
 
 \usepackage{ifthen}
 
@@ -31,7 +29,7 @@
 
  }%
 
- \centering
+\centering
 
 }{%
 
@@ -164,7 +162,7 @@ foottoend
 \begin_body
 
 \begin_layout Title
-Portable Parallel Streams 
+Portable Parallel Seeds 
 \end_layout
 
 \begin_layout Author
@@ -173,7 +171,7 @@ Paul E.
 \end_layout
 
 \begin_layout Abstract
-The R package portableParallelStreams implements one method of managing random
+The R package portableParallelSeeds implements one method of managing random
  streams for batches of simulations.
  It is designed so that separate runs can be replicated exactly, in the
  sense proposed by 
@@ -311,7 +309,403 @@ key "chambers_software_2008"
 \end_layout
 
 \begin_layout Subsection
-Sketch of the portableParallelStreams approach
+A Quick For Loop Example
+\end_layout
+
+\begin_layout Standard
+Because the discussion might seem intimidating to newcomers (and overflowing
+ with jargon), lets begin with the simple use case.
+ A researcher wants to run a Monte Carlo calculation 1000 times.
+ Because each of these simulations might have some abnormal result, it is
+ important that one must be able to pick a particular run, for example 232,
+ and re-initialize it exactly.
+ The following creates a seed collection called projSeeds and then the for
+ loop accesses these seeds, one after the other.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<Roptions, echo=F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+options(device = pdf)
+\end_layout
+
+\begin_layout Plain Layout
+
+options(width=160, prompt=" ", continue="  ")
+\end_layout
+
+\begin_layout Plain Layout
+
+options(useFancyQuotes = FALSE) 
+\end_layout
+
+\begin_layout Plain Layout
+
+##options(SweaveHooks=list(fig=function() par(mar=pjmar, ps=10)))
+\end_layout
+
+\begin_layout Plain Layout
+
+##pdf.options(onefile=F,family="Times",pointsize=10)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(portableParallelSeeds)
+\end_layout
+
+\begin_layout Plain Layout
+
+projSeeds <- seedCreator(1000, 3, seed = 232323)
+\end_layout
+
+\begin_layout Plain Layout
+
+x1 <- vector(1000, mode = "numeric") 
+\end_layout
+
+\begin_layout Plain Layout
+
+for(i in 1:1000) { 
+\end_layout
+
+\begin_layout Plain Layout
+
+    initPortableStreams(projSeeds, run = i)
+\end_layout
+
+\begin_layout Plain Layout
+
+    x1[i] <- mean(rnorm(100))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now suppose the researcher notices that one simulation is somehow unusual.
+ Perhaps a histogram reveals that one simulation generates a result which
+ appears to be an outlier.
+ Perhaps the researcher will be interested to find out more about that one
+ case.
+ For example, she finds the lowest average,
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+lowest <- which.max(x1); x1[lowest]
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To more carefully inspect the lowest simulation, it is possible to ask for
+ just that one run, and re-start it from an identical initial point.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+initPortableStreams(projSeeds, run = lowest)
+\end_layout
+
+\begin_layout Plain Layout
+
+x1.lowest <- rnorm(100)
+\end_layout
+
+\begin_layout Plain Layout
+
+(x1.lowest.mean <- mean(x1.lowest))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that the calculated mean is identical to the value from the previous
+ simulation.
+ This is not a very interesting simulation, of course, but the main idea
+ should be clear enough.
+ One can step into the batch of models and re-start one run from a position
+ that exactly replicates the initial trouble case.
+ 
+\end_layout
+
+\begin_layout Standard
+Finally, suppose one wanted to re-run a whole batch of simulations from
+ an identical spot.
+ Perhaps we add more elaborate calculations, drawing additional observations
+ from the random number stream.
+ We need to be sure we subject this new, enhanced procedure to an identical
+ sample.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+x2 <- vector(1000, mode = "numeric") 
+\end_layout
+
+\begin_layout Plain Layout
+
+for(i in 1:1000) { 
+\end_layout
+
+\begin_layout Plain Layout
+
+    initPortableStreams(projSeeds, run = i, verbose = FALSE)
+\end_layout
+
+\begin_layout Plain Layout
+
+    x2[i] <- mean(rnorm(100))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+    identical(x1, x2)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We confirm, then, it is possible to re-initialize the random generator's
+ stream so as to re-create the same results.
+ 
+\end_layout
+
+\begin_layout Subsection
+Runs, streams: the portableParallelSeeds approach
+\end_layout
+
+\begin_layout Standard
+A 
+\series bold
+run
+\series default
+ is an isolated series of calculations that begins in a pre-determined state.
+ A random number 
+\series bold
+stream
+\series default
+, which is created by a pseudo-random number generator, is an identical
+ sequence of values obtained by repeated calls on the generator.
+ (A PRNG is not a 
+\begin_inset Quotes eld
+\end_inset
+
+random
+\begin_inset Quotes erd
+\end_inset
+
+ sequence in the colloquial sense.
+ It is rather a sequence that is unpredictable to one who is not privy to
+ the initializing state of the random stream.) Experimental runs differ because
+ each begins in a different state.
+ The draws from the generator are uncorrelated and do not have repetitive
+ patterns.
+\end_layout
+
+\begin_layout Standard
+The design of functions that use random numbers in R is a little bit tricky
+ because all generators use to a single state variable called 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Rcode|.Random.seed|
+\end_layout
+
+\end_inset
+
+ that is stored in the global environment of the R session.
+ After each draw from the random generator, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Rcode|.Random.seed|
+\end_layout
+
+\end_inset
+
+ is updated inside the R global environment.
+ As mentioned in Gentleman, 
+\begin_inset Quotes eld
+\end_inset
+
+The decision to have these [random generator] functions manipulate a global
+ variable, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Rcode|.Random.seed|
+\end_layout
+
+\end_inset
+
+, is slightly unfortunate as it makes it somewhat more difficult to manage
+ several different random number streams simultaneously
+\begin_inset Quotes erd
+\end_inset
+
+ (
+\begin_inset CommandInset citation
+LatexCommand citealp
+after "p. 201"
+key "gentleman_r_2008"
+
+\end_inset
+
+).
+ 
+\end_layout
+
+\begin_layout Standard
+The portableParallelSeeds package finesses a solution to that limitation
+ in the following way.
+ Information for several separate streams resides in memory.
+ Random number draws continue to pull from a stream until the user asks
+ R to start drawing from a different stream.
+ Techincally, beneath the surface, we are swapping a different obect in
+ place of R's 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Rcode|.Random.seed|
+\end_layout
+
+\end_inset
+
+ when we intend to draw from a particular stream.
+ This solution is not technically challenging, but it was somewhat difficult
+ to package in a way that will be easy to use and trouble free for most
+ users (see the function 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Rcode|useStream()|
+\end_layout
+
+\end_inset
+
+ for information about how to select among the random number streams).
+ 
+\end_layout
+
+\begin_layout Subsection
+Runs, streams: the portableParallelSeeds approach
 \end_layout
 
 \begin_layout Standard
@@ -320,28 +714,38 @@ Step 1.
 \end_layout
 
 \begin_layout Standard
-It is necessary to conceptualize a simulation project as a sequence of separate
- 
-\begin_inset Quotes eld
-\end_inset
+Run the 
+\begin_inset ERT
+status open
 
-runs.
-\begin_inset Quotes erd
-\end_inset
+\begin_layout Plain Layout
 
- A 
-\series bold
-run
-\series default
- is an isolated series of calculations that begins in a pre-determined state.
- 
+
+\backslash
+Rcode|seedCreator()|
 \end_layout
 
-\begin_layout Standard
-At the outset of the exercise, we will create a warehouse of initializers
- for random streams.
- They can be stored in a file and transported among systems so that the
- simulation can be re-started.
+\end_inset
+
+ function to create initializing information for a a given number of runs
+ (and streams within each run).
+ The object can reside in memory, but we generally recommend that users
+ should specify the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Rcode|file|
+\end_layout
+
+\end_inset
+
+ argument so that a copy of the information is saved in a physical file.
+ The streams can be stored in a file and transported among systems so that
+ a simulation can be re-started on various operating systems.
  
 \end_layout
 
@@ -349,7 +753,7 @@ At the outset of the exercise, we will create a warehouse of initializers
 It may be helpful to think of the collection of initializing states as a
  matrix that has one row for each anticipated run of the model.
  Within each row of this matrix, there will be information to initialize
- one or more separate streams of random numbers.
+ one or more separate streams.
  A sketch of this initializing matrix is offered in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -660,28 +1064,15 @@ Rcode|portableSeeds|
 
 \begin_layout Standard
 Step 2.
- Design the simulation so that, when a run begins, the function that governs
- the run will retrieve its initializing states.
- Those states are then set into the R global environment.
- The function 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-Rcode|initPortableStreams()|
+ Design a function that isolates calculations for each run, and call it
+ over and over.
 \end_layout
 
-\end_inset
-
- will receive the entire collection of seeds and it will select the one
- that is needed for a particular run.
- That interface is more convenient in some simulation designs.
- It is also possible for the programmer to take a set of initializers from
- the seed warehouse and then use it to initialize a set of generators with
- the function called 
+\begin_layout Standard
+Among the first actions within this function should be the establishment
+ of the replicable random number streams.
+ Basically, we simply take the initializing states from the seed warehouse
+ and make them available in an R environment called 
 \begin_inset ERT
 status open
 
@@ -689,13 +1080,13 @@ status open
 
 
 \backslash
-Rcode|setSeedCollection()|
+Rcode|.pps|
 \end_layout
 
 \end_inset
 
 .
- 
+ The function used most commonly for that, 
 \begin_inset ERT
 status open
 
@@ -708,7 +1099,37 @@ Rcode|initPortableStreams()|
 
 \end_inset
 
- and 
+ is used as follows: 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Rcode|initPortableStreams(projSeeds, run = i)|
+\end_layout
+
+\end_inset
+
+.
+ That will take an entire collection of seeds 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Rcode|projSeeds|
+\end_layout
+
+\end_inset
+
+ into memory and then it will set the i'th one as the current set of streams.
+ In an earlier version of this package, this was viewed as a two step process,
+ one would select a row from the seed warehouse and then set it in place.
+ That approach, called 
 \begin_inset ERT
 status open
 
@@ -721,12 +1142,8 @@ Rcode|setSeedCollection|
 
 \end_inset
 
- will place several structures into the R global environment.
-\end_layout
-
-\begin_layout Standard
-The design of functions that use random numbers in R is a little bit tricky
- because all generators use to a state variable called 
+, can still be used.
+ The syntax would be 
 \begin_inset ERT
 status open
 
@@ -734,79 +1151,18 @@ status open
 
 
 \backslash
-Rcode|.Random.seed|
+Rcode|setSeedCollection(projSeeds[i])|
 \end_layout
 
 \end_inset
 
- that is stored in the global environment of the R session.
- As mentioned in Gentleman, 
-\begin_inset Quotes eld
-\end_inset
 
-The decision to have these [random generator] functions manipulate a global
- variable, 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-Rcode|.Random.seed|
-\end_layout
-
-\end_inset
-
-, is slightly unfortunate as it makes it somewhat more difficult to manage
- several different random number streams simultaneously
-\begin_inset Quotes erd
-\end_inset
-
- (
-\begin_inset CommandInset citation
-LatexCommand citealp
-after "p. 201"
-key "gentleman_r_2008"
-
-\end_inset
-
-).
- That can be finessed by keeping the state information for several random
- streams in vectors, and then those values can be swapped in place of 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-Rcode|.Random.seed|
-\end_layout
-
-\end_inset
-
- when we intend to draw from a particular stream.
- The function 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-Rcode|useStream()|
-\end_layout
-
-\end_inset
-
- allows one to select among the random number streams.
+.
  
 \end_layout
 
 \begin_layout Standard
-A simulation program will generally have a function that orchestrates one
- 
+A simulation program should have a function that orchestrates one 
 \begin_inset Quotes eld
 \end_inset
 
@@ -889,7 +1245,7 @@ conductOneRun <- function(run, streamSet, a, b, c, d){
 \begin_layout Standard
 If the initializing states are saved in a file, then re-starting the process
  on any computer running R will re-generate the same simulation because
- the R Core Team (2012) has taken great effort to assure us that saved R
+ the R Core Team (2014) has taken great effort to assure us that saved R
  files can be transferred from one type of hardware to another.
  
 \end_layout
@@ -906,14 +1262,22 @@ The run-level initialization of random streams proposed here has several
 
 \begin_layout Standard
 Benefit 1.
- Get the same results for each individual run, every time, whether the exercise
- is conducted on a workstation (in a serial process) or on compute clusters
+ We get the same results for each individual run, whether the exercise is
+ conducted on a workstation (in a serial process) or on compute clusters
  of various sizes.
  
 \end_layout
 
 \begin_layout Standard
-The approach in snowFT will initialize the compute nodes, but then repeatedly
+By comparison, this is not possible with snowFT
+\begin_inset CommandInset citation
+LatexCommand citep
+key "snowFT"
+
+\end_inset
+
+.
+ The approach in snowFT will initialize the compute nodes, but then repeatedly
  assign jobs to the nodes without re-setting the random streams.
  This will assure that a whole batch of simulations can be replicated on
  that particular hardware setup, but it does not assure replication on clusters
@@ -1077,7 +1441,7 @@ status open
 
 \begin_layout Plain Layout
 
-library(portableParallelStreams)
+library(portableParallelSeeds)
 \end_layout
 
 \begin_layout Plain Layout
@@ -1255,52 +1619,52 @@ runOneSimulation <- function(run, streamsource, N, m, sd){
 
 \begin_layout Plain Layout
 
-initPortableStreams(streamsource, run = run, verbose= FALSE)
+    initPortableStreams(streamsource, run = run, verbose= FALSE)
 \end_layout
 
 \begin_layout Plain Layout
 
-datX <- rnorm(N, mean = m, sd = sd)
+    datX <- rnorm(N, mean = m, sd = sd)
 \end_layout
 
 \begin_layout Plain Layout
 
-datXmean <- mean(datX)
+    datXmean <- mean(datX)
 \end_layout
 
 \begin_layout Plain Layout
 
-useStream(2)
+    useStream(2)
 \end_layout
 
 \begin_layout Plain Layout
 
-datY <- rpois(N, lambda = m)
+    datY <- rpois(N, lambda = m)
 \end_layout
 
 \begin_layout Plain Layout
 
-datYmean <- mean(datY)
+    datYmean <- mean(datY)
 \end_layout
 
 \begin_layout Plain Layout
 
-useStream(1)
+    useStream(1)
 \end_layout
 
 \begin_layout Plain Layout
 
-datXplusOne <- rnorm(1, mean = m, sd = sd)
+    datXplusOne <- rnorm(1, mean = m, sd = sd)
 \end_layout
 
 \begin_layout Plain Layout
 
-## Should be N+1'th element from first stream
+    ## Should be N+1'th element from first stream
 \end_layout
 
 \begin_layout Plain Layout
 
-c("datXmean" = datXmean, "datYmean" = datYmean, "datXplusOne" = datXplusOne)
+    c("datXmean" = datXmean, "datYmean" = datYmean, "datXplusOne" = datXplusOne)
 \end_layout
 
 \begin_layout Plain Layout
