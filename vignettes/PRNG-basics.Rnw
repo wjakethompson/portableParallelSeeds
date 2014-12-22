@@ -640,21 +640,22 @@ understanding of the effects of re-sampling and changes in sample
 size.
 
 Only a small change in the mvrnorm code is required to solve this
-problem. Packaged with parallelPortableSeeds one finds a new version
-of mvrnorm that has better results, at least in terms of replication:
+problem. A revised version of mvrnorm was packaged with rockchalk. 
+That guarantees replication of the first block of rows
+when a larger simulation is executed. 
 
 <<>>=
-library(portableParallelStreams)
+library(rockchalk)
 set.seed(12345)
-Y0 <- portableParallelStreams::mvrnorm(n=10, mu = c(0,0,0), Sigma = diag(3))
+Y0 <- rockchalk::mvrnorm(n=10, mu = c(0,0,0), Sigma = diag(3))
 Y0
 set.seed(12345)
-Y1 <- portableParallelStreams::mvrnorm(n=5, mu = c(0,0,0), Sigma = diag(3))
+Y1 <- rockchalk::mvrnorm(n=5, mu = c(0,0,0), Sigma = diag(3))
 Y1
 set.seed(12345)
 .Random.seed
 rnorm(1)
-Y2 <- portableParallelStreams::mvrnorm(n=15, mu = c(0,0,0), Sigma = diag(3))
+Y2 <- rockchalk::mvrnorm(n=15, mu = c(0,0,0), Sigma = diag(3))
 Y2
 @
 

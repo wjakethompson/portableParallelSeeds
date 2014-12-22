@@ -25,4 +25,4 @@ Date: 2014-11-24
 Depends:
     parallel
 Imports:
-    MASS
+    rockchalk
