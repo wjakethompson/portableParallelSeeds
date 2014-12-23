@@ -41,6 +41,7 @@
 ##' @param file The file name in which the list of stream seeds is to be collected, by default, that file is called "projSeeds.rds".
 ##' @return A list that includes "nReps" elements. Each element is a vector of "streamsPerRep" stream starting values.
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
+##' @import parallel
 ##' @seealso snowft, streams, parallel
 ##' @references L'Ecuyer, P. (1999). Good Parameters and
 ##' Implementations for Combined Multiple Recursive Random Number
@@ -76,7 +77,7 @@ seedCreator <- function(nReps = 2000, streamsPerRep = 3, seed, file = NULL){
     for (i in 1:nReps) {
         for (j in 1:streamsPerRep){
             projSeeds[[i]][[j]] <- s
-            s <- nextRNGStream(s)
+            s <- parallel::nextRNGStream(s)
         }
     }
     class(projSeeds) <- "portableSeeds"
@@ -107,14 +108,14 @@ seedCreator <- function(nReps = 2000, streamsPerRep = 3, seed, file = NULL){
 ##' @rdname update.portableSeeds
 ##' @method update portableSeeds
 ##' @examples
+##' require(parallel)
 ##' projSeeds <- seedCreator(2000, 3, seed = 123456, file = "someSeeds.rds")
-##' projSeeds2 <- update(projSeeds, more=19, file = "somePlusSeeds.rds")
+##' projSeeds2 <- update(projSeeds, more = 19, file = "somePlusSeeds.rds")
 ##' identical(projSeeds[[1]], projSeeds2[[1]])
 ##' identical(projSeeds[[2000]], projSeeds2[[2000]])
 ##' projSeeds2[[2001]]
 ##' projSeedsLast <- projSeeds[[2000]][[3]]
-##' require(parallel)
-##' projSeedsNext <- nextRNGStream(projSeedsLast)
+##' projSeedsNext <- parallel::nextRNGStream(projSeedsLast)
 ##' identical(projSeedsNext, projSeeds2[[2001]][[1]])
 update.portableSeeds <- function(object, more, file = NULL, ...){
     RNGkind("L'Ecuyer-CMRG")
@@ -132,7 +133,7 @@ update.portableSeeds <- function(object, more, file = NULL, ...){
     streamsPerRep <- length(object[[1]])
     
     s <- object[[nReps]][[streamsPerRep]]
-    s <- nextRNGStream(s)
+    s <- parallel::nextRNGStream(s)
     
     newSeeds <-  vector(mode="list", length = more)
     for (i in 1:more) newSeeds[[i]] <- vector(mode="list", streamsPerRep)
@@ -141,7 +142,7 @@ update.portableSeeds <- function(object, more, file = NULL, ...){
     for (i in (1 + nReps):(nReps + more)) {
         for (j in 1:streamsPerRep){
             object[[i]][[j]] <- s
-            s <- nextRNGStream(s)
+            s <- parallel::nextRNGStream(s)
         }
     }
     class(object) <- "portableSeeds"

@@ -210,7 +210,7 @@ initPortableStreams <- function(projSeeds, run, verbose = FALSE){
         print(paste(get("currentStates", envir = .pps, inherits = FALSE)))
     }
 }
-
+NULL
 
 
 ##' Sets a collection of initial states for separate random generator
@@ -247,6 +247,7 @@ initPortableStreams <- function(projSeeds, run, verbose = FALSE){
 ##' given run within a seed collection; \code{seedCreator} to generate
 ##' the a seed collection; \code{useStream} to change from one stream
 ##' to another.
+##' @importFrom rockchalk mvrnorm
 ##' @example inst/examples/pps-ex-2.R
 setSeedCollection <- function(runSeeds, currentStream = 1L, verbose = FALSE){
     RNGkind("L'Ecuyer-CMRG")
@@ -270,3 +271,4 @@ setSeedCollection <- function(runSeeds, currentStream = 1L, verbose = FALSE){
         print(paste(get("currentStates", envir = .pps, inherits = FALSE)))
   }
 }
+NULL
