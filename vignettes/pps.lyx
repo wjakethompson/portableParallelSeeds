@@ -211,7 +211,7 @@ ly) or on a cluster computer (parallel) and obtain the same results.
 \end_layout
 
 \begin_layout Standard
-The portableParallelStreams package for R proposes a simple, yet powerful,
+The portableParallelSeeds package for R proposes a simple, yet powerful,
  method for replicating simulations in a way that is valid across hardware
  types and operating systems.
  It facilitates the work of researchers who need to run a series of simulations,
@@ -260,7 +260,7 @@ key "snowFT"
  simulation runs begin separately on many separate nodes.
  The framework introduced in snowFT initializes each compute node with its
  own random seed, but does not separately initialize each run of the model.
- The plan used in portableParallelStreams addresses these shortcomings.
+ The plan used in portableParallelSeeds addresses these shortcomings.
 \end_layout
 
 \begin_layout Section
@@ -303,7 +303,7 @@ key "chambers_software_2008"
  On the other hand, if one accidentally draws numbers that differ, when
  the logic indicates that they ought to be exactly the same, then one will
  mistakenly conclude that something important has changed.
- The tools offered in portableParallelStreams will help Monte Carlo studies
+ The tools offered in portableParallelSeeds will help Monte Carlo studies
  avoid some of those dangers.
  
 \end_layout
@@ -1156,7 +1156,6 @@ Rcode|setSeedCollection(projSeeds[i])|
 
 \end_inset
 
-
 .
  
 \end_layout
@@ -1377,7 +1376,7 @@ The approach proposed here can create several random streams for use within
  after that.
  Otherwise, the effect of adding the k additional observations is confounded
  with the entire replacement of the original N observations.
- Because portableParallelStreams offers several separate streams, and each
+ Because portableParallelSeeds offers several separate streams, and each
  can be re-set at any time, the correct implementation is more likely to
  be achieved.
 \end_layout
@@ -1410,7 +1409,7 @@ out of sequence
 \end_layout
 
 \begin_layout Section
-Example Usage of portableParallelStreams
+Example Usage of portableParallelSeeds
 \end_layout
 
 \begin_layout Standard
@@ -1916,7 +1915,7 @@ Conclusion
 \end_layout
 
 \begin_layout Standard
-This paper describes an R package called portableParallelStreams.
+This paper describes an R package called portableParallelSeeds.
  The package provides functions that can generate a seed collection which
  can be put to use in a series of simulation runs.
  The approach described here is based on the re-initialization of individual

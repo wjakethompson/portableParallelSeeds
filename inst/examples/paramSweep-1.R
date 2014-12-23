@@ -6,7 +6,7 @@
 ## of sampling distributions (which is an extremely popular topic
 ## among my students).
 
-library(portableParallelStreams)
+library(portableParallelSeeds)
 
 ## genData uses mvrnorm from portableParallelStreams, which
 ## means that if you re-set the random stream at the origin

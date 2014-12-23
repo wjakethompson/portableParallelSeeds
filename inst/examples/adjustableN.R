@@ -11,7 +11,7 @@
 ## runOneSimulation function. It is VITAL to separate the streams of
 ## separate random number draws.
 
-library(portableParallelStreams)
+library(portableParallelSeeds)
 
 runOneSimulation <- function(run, projSeeds, parm){
   initPortableStreams(projSeeds, run = run)

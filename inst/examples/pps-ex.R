@@ -1,4 +1,4 @@
-library(portableParallelStreams)
+library(portableParallelSeeds)
 
 projSeeds <- seedCreator(2000, 3, seed = 123456, file = "fruits.rds")
 A1 <- projSeeds[[787]]

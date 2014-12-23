@@ -3,7 +3,7 @@
 ## 2012-11-08
 
 
-library(portableParallelStreams)
+library(portableParallelSeeds)
 ##that causes environment to be set like: RNGkind("L'Ecuyer-CMRG")
 
 
@@ -30,7 +30,7 @@ serial1 <- lapply(1:nReps, runOneSimulation, projSeeds, parm = parms)
 cl <- makeCluster(4, "MPI")
 
 clusterEvalQ(cl, {
-  library(parallel); library(portableParallelStreams)
+  library(parallel); library(portableParallelSeeds)
 })
 
 

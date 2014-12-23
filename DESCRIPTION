@@ -19,10 +19,11 @@ Description: Creates seeds for simulation projects.  Uses the L'Eucyer
    with iteration on a single computer. Includes vignettes to explain
    some basics of the package and the usage of pseudo-random number
    generators (PRNG).
-Version: 0.93
+Version: 0.94
 Repository: CRAN
-Date: 2014-11-24
+Date: 2014-12-22
 Depends:
     parallel
 Imports:
+    MASS
     rockchalk
