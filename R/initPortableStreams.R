@@ -8,7 +8,7 @@
 ##' R's global environment variable .Random.seed is re-set so that
 ##' random numbers generated after this call will follow from a
 ##' designated random number state. This will fail unless the
-##' \code{initPortableStreams} function has already been called. This
+##' \code{setSeeds} function has already been called. This
 ##' function simply selects the n'th random stream for use,
 ##' presupposing that those stream states have already been set in the
 ##' global environment.
@@ -69,7 +69,7 @@ useStream <- function(n = NULL, origin = FALSE, verbose = FALSE){
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##' @examples
 ##' mySeeds <- seedCreator(500, 5, file="mySeeds.rds", seed = 123123)
-##' initPortableStreams(mySeeds, run = 17)
+##' setSeeds(mySeeds, run = 17)
 ##' runif(2)
 ##' getCurrentStream()
 ##' useStream(2)
@@ -106,7 +106,7 @@ getCurrentStream <- function(){
 ##' @export
 ##' @examples
 ##' mySeeds <- seedCreator(500, 5, file = "mySeeds.rds", seed = 123123)
-##' initPortableStreams(mySeeds, run = 17)
+##' setSeeds(mySeeds, run = 17)
 ##' runif(2)
 ##' getCurrentStream()
 ##' getState(origin=TRUE)
@@ -125,7 +125,7 @@ getState <- function(stream, origin = FALSE){
         else stop("startStates is not found in the environment.  Did you damage it?")
         if (missing(stream)) return(states)
         else if (length(states) >= stream) return (states[[stream]])
-        else stop("In initPortableSeeds, function getState: requested stream does not exist")
+        else stop("Function getState: requested stream does not exist")
     } else {
         if (exists("currentStates", envir = .pps, inherits = FALSE))
             states <- get("currentStates", envir = .pps, inherits = FALSE)
@@ -133,7 +133,7 @@ getState <- function(stream, origin = FALSE){
 
         if (missing(stream)) return(states)
         else if (length(states) >= stream) return (states[[stream]])
-        else stop("In initPortableSeeds, function getState: requested stream does not exist")
+        else stop("Function getState: requested stream does not exist")
     }
     stop("Reached the end of getState without returning, some error occurred.")
 }
@@ -187,7 +187,7 @@ getState <- function(stream, origin = FALSE){
 ##' function and \code{useStream} to change from one stream to
 ##' another.
 ##' @example inst/examples/pps-ex.R
-setSeeds <- initPortableStreams <- function(projSeeds, run, verbose = FALSE){
+setSeeds <- function(projSeeds, run, verbose = FALSE){
     RNGkind("L'Ecuyer-CMRG")
     
     if (missing(projSeeds)) {
@@ -238,20 +238,20 @@ NULL
 ##'
 ##' @export setSeedCollection
 ##' @param runSeeds Required. A list including seeds (vectors of
-##' initializing values) for the L'Ecuyer-CMRG random generator
+##'     initializing values) for the L'Ecuyer-CMRG random generator
 ##' @param currentStream Optional. Integer indicating which of the
-##' streams is to be used first. Default = 1.
+##'     streams is to be used first. Default = 1.
 ##' @param verbose Optional. Default = FALSE.
 ##' @return nothing is returned. This function is used for the side
-##' effect of setting three objects in the environment, the
-##' startStates (list), currentStates (list), and currentStream (an
-##' integer).
+##'     effect of setting three objects in the environment, the
+##'     startStates (list), currentStates (list), and currentStream
+##'     (an integer).
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
-##' @seealso \code{setSeeds} performs the same service, but
-##' it does the additional work of finding the correct element for a
-##' given run within a seed collection; \code{seedCreator} to generate
-##' the a seed collection; \code{useStream} to change from one stream
-##' to another.
+##' @seealso \code{setSeeds} performs the same service, but it does
+##'     the additional work of finding the correct element for a given
+##'     run within a seed collection; \code{seedCreator} to generate
+##'     the a seed collection; \code{useStream} to change from one
+##'     stream to another.
 ##' @importFrom rockchalk mvrnorm
 ##' @example inst/examples/pps-ex-2.R
 setSeedCollection <- function(runSeeds, currentStream = 1L, verbose = FALSE){
@@ -275,5 +275,33 @@ setSeedCollection <- function(runSeeds, currentStream = 1L, verbose = FALSE){
         print("All Current States")
         print(paste(get("currentStates", envir = .pps, inherits = FALSE)))
   }
+}
+NULL
+
+
+##' The name previously used for the function
+##' \code{\link{setSeeds}}. 
+##'
+##' This is replaced by \code{\link{setSeeds}}, which does exactly the
+##' same thing, but with a name that is more immediatly understandable
+##' to users.  This is now deprecated, will be removed.
+##' @export
+##' @param projSeeds Required. Either an object of class portableSeeds
+##'     (created by \code{\link{seedCreator}}) or a text string giving the
+##'     name of an R saved file of the appropriate format (created by
+##'     the seedCreator function).
+##' @param run Integer indicating which element from the portable seed
+##'     collection is to be selected
+##' @param verbose Optional. Print out the state of the current
+##'     generator. Default = FALSE.
+##' @return nothing is returned. This function is used for the side
+##'     effect of setting three objects in the global environment, the
+##'     startStates (list), currentStates (list), and currentStream
+##'     (an integer).
+##' @author Paul E. Johnson <pauljohn@@ku.edu>
+##' @seealso \code{\link{setSeeds}} which is the replacement for this
+##'     function.
+initPortableStreams <- function(projSeeds, run, verbose = FALSE){
+    setSeeds(projSeeds, run, verbose)
 }
 NULL
