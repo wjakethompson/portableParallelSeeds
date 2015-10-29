@@ -85,7 +85,8 @@ getCurrentStream <- function(){
 
 
 
-##' Return one or all state vectors, either from original position or current position.
+##' Return one or all state vectors, either from original position or
+##' current position.
 ##'
 ##' The environment variable currentStates is a list of states of
 ##' random generators. In most use cases, users will not need to use
@@ -96,8 +97,12 @@ getCurrentStream <- function(){
 ##'
 ##' @return Integer index value of currently selected stream
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
-##' @param stream Optional. Selects a particular stream's state.  If no value is supplied, then the list including all of the stream states is supplied.
-##' @param origin If FALSE (default), return the current, updated state of one or all random stream. If TRUE, return the initial stream states.
+##' @param stream Optional. Selects a particular stream's state.  If
+##'     no value is supplied, then the list including all of the
+##'     stream states is supplied.
+##' @param origin If FALSE (default), return the current, updated
+##'     state of one or all random stream. If TRUE, return the initial
+##'     stream states.
 ##' @export
 ##' @examples
 ##' mySeeds <- seedCreator(500, 5, file = "mySeeds.rds", seed = 123123)
@@ -163,8 +168,8 @@ getState <- function(stream, origin = FALSE){
 ##' At the outset, startStates and currentStates are identical and
 ##' currentStream equals 1 (meaning the first element of currentStates
 ##' is taken as the state of the random generator).
-##' @export initPortableStreams
-##' @title initPortableStreams
+##' @export setSeeds
+##' @title setSeeds
 ##' @param projSeeds Required. Either an object of class portableSeeds
 ##' (created by \code{seedCreator}) or a text string giving the name
 ##' of an R saved file of the appropriate format (created by the
@@ -182,11 +187,11 @@ getState <- function(stream, origin = FALSE){
 ##' function and \code{useStream} to change from one stream to
 ##' another.
 ##' @example inst/examples/pps-ex.R
-initPortableStreams <- function(projSeeds, run, verbose = FALSE){
+setSeeds <- initPortableStreams <- function(projSeeds, run, verbose = FALSE){
     RNGkind("L'Ecuyer-CMRG")
     
     if (missing(projSeeds)) {
-        stop("initPortableStreams requires a seed object in order to initialize the random streams")
+        stop("setSeeds requires a seed object in order to initialize the random streams")
     } else if (is.character(projSeeds)){
         projSeeds <- readRDS(projSeeds)
     }
@@ -203,7 +208,7 @@ initPortableStreams <- function(projSeeds, run, verbose = FALSE){
     assign("currentStates", runSeeds, envir = .pps)
     assign(".Random.seed", runSeeds[[1L]],  envir = .GlobalEnv)
     if (verbose){
-        print(paste("initPortableStreams, Run = ", run))
+        print(paste("setSeeds, Run = ", run))
         print(.Random.seed)
         print(paste("CurrentStream =", get("currentStream", envir = .pps, inherits = FALSE)))
         print("All Current States")
@@ -222,9 +227,9 @@ NULL
 ##' .RandomSeed, currentStream, startStates, and currentStates.
 ##'
 ##' As originally planned in this package, the suggested method of
-##' setting the seeds is the initPortableStreams function. That
+##' setting the seeds is the setSeeds function. That
 ##' function receives a run number and a warehouse of seeds created by
-##' seedCreator. \code{initPortableStreams} will select the
+##' seedCreator. \code{setSeeds} will select the
 ##' initializing states for the streams from the seed warehouse.
 ##'
 ##' Some specific use cases, particuarly the replication of individual
@@ -242,7 +247,7 @@ NULL
 ##' startStates (list), currentStates (list), and currentStream (an
 ##' integer).
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
-##' @seealso \code{initPortableStreams} performs the same service, but
+##' @seealso \code{setSeeds} performs the same service, but
 ##' it does the additional work of finding the correct element for a
 ##' given run within a seed collection; \code{seedCreator} to generate
 ##' the a seed collection; \code{useStream} to change from one stream

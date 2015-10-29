@@ -398,7 +398,7 @@ for(i in 1:1000) {
 
 \begin_layout Plain Layout
 
-    initPortableStreams(projSeeds, run = i)
+    setSeeds(projSeeds, run = i)
 \end_layout
 
 \begin_layout Plain Layout
@@ -470,7 +470,7 @@ status open
 
 \begin_layout Plain Layout
 
-initPortableStreams(projSeeds, run = lowest)
+setSeeds(projSeeds, run = lowest)
 \end_layout
 
 \begin_layout Plain Layout
@@ -533,7 +533,7 @@ for(i in 1:1000) {
 
 \begin_layout Plain Layout
 
-    initPortableStreams(projSeeds, run = i, verbose = FALSE)
+    setSeeds(projSeeds, run = i, verbose = FALSE)
 \end_layout
 
 \begin_layout Plain Layout
@@ -1094,7 +1094,7 @@ status open
 
 
 \backslash
-Rcode|initPortableStreams()|
+Rcode|setSeeds()|
 \end_layout
 
 \end_inset
@@ -1107,7 +1107,7 @@ status open
 
 
 \backslash
-Rcode|initPortableStreams(projSeeds, run = i)|
+Rcode|setSeeds(projSeeds, run = i)|
 \end_layout
 
 \end_inset
@@ -1194,7 +1194,7 @@ status open
 
 
 \backslash
-Rcode|initPortableStreams()|
+Rcode|setSeeds()|
 \end_layout
 
 \end_inset
@@ -1218,7 +1218,7 @@ conductOneRun <- function(run, streamSet, a, b, c, d){
 
 \begin_layout Plain Layout
 
-    initPortableStreams(projSeeds = streamSet, run = run, verbose = FALSE)
+    setSeeds(projSeeds = streamSet, run = run, verbose = FALSE)
 \end_layout
 
 \begin_layout Plain Layout
@@ -1479,7 +1479,7 @@ seeds
 \end_inset
 
 ) saved for run 787 in this example.
- We first check that the initPortableStreams() function can receive the
+ We first check that the setSeeds() function can receive the
  collection of initializing information and re-generate the streams for
  run 787.
  
@@ -1496,7 +1496,7 @@ status open
 
 \begin_layout Plain Layout
 
-initPortableStreams(projSeeds, run = 787, verbose = TRUE)
+setSeeds(projSeeds, run = 787, verbose = TRUE)
 \end_layout
 
 \begin_layout Plain Layout
@@ -1564,7 +1564,7 @@ identical(A1, B1) # check
 
 \begin_layout Plain Layout
 
-initPortableStreams("fruits.rds", run=787)
+setSeeds("fruits.rds", run=787)
 \end_layout
 
 \begin_layout Plain Layout
@@ -1618,7 +1618,7 @@ runOneSimulation <- function(run, streamsource, N, m, sd){
 
 \begin_layout Plain Layout
 
-    initPortableStreams(streamsource, run = run, verbose= FALSE)
+    setSeeds(streamsource, run = run, verbose= FALSE)
 \end_layout
 
 \begin_layout Plain Layout
@@ -1776,7 +1776,7 @@ status open
 
 \begin_layout Plain Layout
 
-initPortableStreams("fruits.rds", run = 912, verbose = FALSE)
+setSeeds("fruits.rds", run = 912, verbose = FALSE)
 \end_layout
 
 \begin_layout Plain Layout

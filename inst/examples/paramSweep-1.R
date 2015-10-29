@@ -13,7 +13,7 @@ library(portableParallelSeeds)
 ## and draw N cases, and then draw N+k cases, the first N
 ## rows will be the same in each dataframe.
 genData <- function(run, seeds, parm){
-    initPortableStreams(seeds, run = run)
+    setSeeds(seeds, run = run)
     dat <- portableParallelStreams::mvrnorm(parm$N, mu = c(0,0), Sigma = diag(2))
     dat <- as.data.frame(dat)
     names(dat) <- c("x1", "x2")

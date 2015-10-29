@@ -6,7 +6,7 @@ A1 ## shows states of 3 generators for one run
 
 ## This function does not need to know what the run number is,
 ## since it accepts a stream collection as its first argument.
-## Prehaps this is a simpler, more elegant approach than in initPortableStreams.
+## Prehaps this is a simpler, more elegant approach than in setSeeds.
 runOneSimulation <- function(streams, N, m, sd, beta = c(0.3, 0.2, 0.1))
 {
     setSeedCollection(streams)

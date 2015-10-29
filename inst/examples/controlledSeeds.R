@@ -8,7 +8,7 @@ library(portableParallelSeeds)
 
 
 runOneSimulation <- function(run, projSeeds, parm){
-  initPortableStreams(projSeeds, run = run)
+  setSeeds(projSeeds, run = run)
   dat <- data.frame(x1 = rnorm(parm$N), x2 = rnorm(parm$N))
   useStream(2)
   dat$y <- with(dat, 0.1 + 0.2 * x1 -0.04* x2 + parm$STDEE * rnorm(parm$N))

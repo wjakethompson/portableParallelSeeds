@@ -5,7 +5,7 @@ A1 <- projSeeds[[787]]
 A1 ## shows states of 3 generators for run 787
 
 
-initPortableStreams(projSeeds, run = 787, verbose = TRUE)
+setSeeds(projSeeds, run = 787, verbose = TRUE)
 .Random.seed
 getCurrentStream()
 runif(4)
@@ -17,13 +17,13 @@ B1 <- myFruitySeeds[[787]]
 identical(A1, B1) # check
 
 
-initPortableStreams("fruits.rds", run=787)
+setSeeds("fruits.rds", run=787)
 .Random.seed
 runif(4)
 
 
 runOneSimulation <- function(run, streamsource, N, m, sd){
-    initPortableStreams(streamsource, run = run, verbose= FALSE)
+    setSeeds(streamsource, run = run, verbose= FALSE)
     datX <- rnorm(N, mean = m, sd = sd)
     datXmean <- mean(datX)
     useStream(2)
@@ -53,7 +53,7 @@ identical(serial1, serial3)
 ## Next question. Is the 801'th random normal from stream 1 equal to
 ## the 3'rd element in the returned vector? Lets check run 912
 
-initPortableStreams("fruits.rds", run = 912, verbose = FALSE)
+setSeeds("fruits.rds", run = 912, verbose = FALSE)
 (X801 <- rnorm(801, m=14, sd = 10.1)[801])
 
 ## Look at the 801'th element of X801
