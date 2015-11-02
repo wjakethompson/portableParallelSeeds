@@ -1,19 +1,17 @@
 ## Paul E. Johnson CRMDA <pauljohn@ku.edu>
 ## Portable Parallel Seeds Project.
-## 2012-11-08
+## 2015-11-02
 
 
 library(portableParallelSeeds)
-##that causes environment to be set like: RNGkind("L'Ecuyer-CMRG")
-
 
 runOneSimulation <- function(run, projSeeds, parm){
-  setSeeds(projSeeds, run = run)
-  dat <- data.frame(x1 = rnorm(parm$N), x2 = rnorm(parm$N))
-  useStream(2)
-  dat$y <- with(dat, 0.1 + 0.2 * x1 -0.04* x2 + parm$STDEE * rnorm(parm$N))
-  m1 <- lm(y ~ x1 + x2, data = dat)
-  list("m1" = m1, "m1sum" = summary(m1))
+    setSeeds(projSeeds, run = run)
+    dat <- data.frame(x1 = rnorm(parm$N), x2 = rnorm(parm$N))
+    useStream(2)
+    dat$y <- with(dat, 0.1 + 0.2 * x1 -0.04* x2 + parm$STDEE * rnorm(parm$N))
+    m1 <- lm(y ~ x1 + x2, data = dat)
+    list("m1" = m1, "m1sum" = summary(m1))
 }
 
 
@@ -28,7 +26,7 @@ serial1 <- lapply(1:nReps, runOneSimulation, projSeeds, parm = parms)
 
 
 cl <- makeCluster(4, "MPI")
-
+    
 clusterEvalQ(cl, {
   library(parallel); library(portableParallelSeeds)
 })
@@ -41,7 +39,7 @@ parallel1 <- parLapply(cl, 1:nReps, runOneSimulation, projSeeds, parm = parms)
 
 serial1[[7]]
 
-parallel1[[7]
+parallel1[[7]]
 
 all.equal(coef(serial1[[7]][[1]]), coef(parallel1[[7]][[1]]))
 
@@ -70,7 +68,7 @@ parallel1.2005 <- parLapply(cl, 1:nReps, runOneSimulation, projSeeds, parm = par
 
 head(model.matrix(parallel1.2005[[7]]$m1))
 
-head(model.matrix(serial1[[7]]$m1)
+head(model.matrix(serial1[[7]]$m1))
 
 
 library(snow)
