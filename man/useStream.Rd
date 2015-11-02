@@ -7,14 +7,19 @@
 useStream(n = NULL, origin = FALSE, verbose = FALSE)
 }
 \arguments{
-\item{n}{An integer that selects which random stream should be used for the following work.}
+\item{n}{An integer that selects which random stream should be
+used for the following work.}
 
-\item{origin}{True or False. Should the stream be set at its original starting position, so as to re-generate the stream starting from the beginning? If FALSE, random numbers are drawn from the stream's current state.}
+\item{origin}{True or False. Should the stream be set at its
+original starting position, so as to re-generate the stream
+starting from the beginning? If FALSE, random numbers are
+drawn from the stream's current state.}
 
 \item{verbose}{Requests detailed output for diagnostics.}
 }
 \value{
-Nothing. This function is run to change environment variables.
+Nothing. This function is run to change environment
+    variables.
 }
 \description{
 R's global environment variable .Random.seed is re-set so that

@@ -21,39 +21,44 @@
 ##' currentStates[[currentStream]], so that successively drawn random
 ##' numbers follow the proper generator.
 ##' @export useStream
-##' @param n An integer that selects which random stream should be used for the following work.
-##' @param origin True or False. Should the stream be set at its original starting position, so as to re-generate the stream starting from the beginning? If FALSE, random numbers are drawn from the stream's current state.
+##' @param n An integer that selects which random stream should be
+##'     used for the following work.
+##' @param origin True or False. Should the stream be set at its
+##'     original starting position, so as to re-generate the stream
+##'     starting from the beginning? If FALSE, random numbers are
+##'     drawn from the stream's current state.
 ##' @param verbose Requests detailed output for diagnostics.
-##' @return Nothing. This function is run to change environment variables.
+##' @return Nothing. This function is run to change environment
+##'     variables.
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
 useStream <- function(n = NULL, origin = FALSE, verbose = FALSE){
-  oldseed <-
-    if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
-      get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
-    else stop("in useStream, .Random.seed was NULL")
-  ## get local copies of currentStream, currentStates
-  curStream <- get("currentStream", envir = .pps, inherits = FALSE)
+    oldseed <-
+        if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
+            get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
+        else stop("in useStream, .Random.seed was NULL")
+    ## get local copies of currentStream, currentStates
+    curStream <- get("currentStream", envir = .pps, inherits = FALSE)
   curStates <- get("currentStates", envir = .pps, inherits = FALSE)
-
-  if (n > length(curStates)) stop("requested stream does not exist")
-  curStates[[curStream]] <- oldseed
-  if (origin) {
-    strtStates <- get("startStates", envir = .pps, inherits = FALSE)
-    assign(".Random.seed", strtStates[[n]], envir = .GlobalEnv)
-  } else {
-    assign(".Random.seed", curStates[[n]], envir = .GlobalEnv)
-  }
-  ## put currentStream and currentStates back to .pps
-
-  assign("currentStream", n, envir = .pps)
-  assign("currentStates", curStates, envir = .pps)
-  if (verbose){
-    print("useStream useStream useStream useStream")
-    print("CurrentStream CurrentStream CurrentStream")
-    print( get("currentStream", envir = .pps, inherits = FALSE) )
-    print("Current .Random.seed")
-    print(.Random.seed)
-  }
+    
+    if (n > length(curStates)) stop("requested stream does not exist")
+    curStates[[curStream]] <- oldseed
+    if (origin) {
+        strtStates <- get("startStates", envir = .pps, inherits = FALSE)
+        assign(".Random.seed", strtStates[[n]], envir = .GlobalEnv)
+    } else {
+        assign(".Random.seed", curStates[[n]], envir = .GlobalEnv)
+    }
+    ## put currentStream and currentStates back to .pps
+    
+    assign("currentStream", n, envir = .pps)
+    assign("currentStates", curStates, envir = .pps)
+    if (verbose){
+        print("useStream useStream useStream useStream")
+        print("CurrentStream CurrentStream CurrentStream")
+        print( get("currentStream", envir = .pps, inherits = FALSE) )
+        print("Current .Random.seed")
+        print(.Random.seed)
+    }
 }
 
 
@@ -186,21 +191,26 @@ getState <- function(stream, origin = FALSE){
 ##' @seealso \code{seedCreator} to generate the input file for this
 ##' function and \code{useStream} to change from one stream to
 ##' another.
-##' @example inst/examples/pps-ex.R
+##' @example inst/examples/pps-ex-1.R
 setSeeds <- function(projSeeds, run, verbose = FALSE){
     RNGkind("L'Ecuyer-CMRG")
     
     if (missing(projSeeds)) {
-        stop("setSeeds requires a seed object in order to initialize the random streams")
+        stop(paste("setSeeds requires a seed object in order",
+                   "to initialize the random streams"))
     } else if (is.character(projSeeds)){
         projSeeds <- readRDS(projSeeds)
     }
     if (class(projSeeds) != "portableSeeds"){
-        stop("Inappropriate project seed object supplied. The projSeeds object must be created by the seedCreator function, which would have set its class as portableSeeds")
+        stop(paste("Inappropriate project seed object supplied.",
+                   "The projSeeds object must be created by the",
+                   "seedCreator function, which would have set its",
+                   "class as portableSeeds"))
     }
     
     
-    if (missing(run)) stop("run must be specified. Which replication is to be re-initialized?")
+    if (missing(run)) stop(paste("run must be specified.",
+                                 "Which replication is to be re-initialized?"))
     ## if (length(projSeeds) < run) stop(paste("The project seed object does not include enough elements to draw the one you are asking for. The seed object includes only ", length(projSeeds), " objects."))
     runSeeds <- projSeeds[[run]]
     assign("currentStream",  1L, envir = .pps)
@@ -209,36 +219,33 @@ setSeeds <- function(projSeeds, run, verbose = FALSE){
     assign(".Random.seed", runSeeds[[1L]],  envir = .GlobalEnv)
     if (verbose){
         print(paste("setSeeds, Run = ", run))
-        print(.Random.seed)
+                               print(.Random.seed)
         print(paste("CurrentStream =", get("currentStream", envir = .pps, inherits = FALSE)))
-        print("All Current States")
+                               print("All Current States")
         print(paste(get("currentStates", envir = .pps, inherits = FALSE)))
     }
 }
 NULL
 
 
-##' Sets a collection of initial states for separate random generator
+##' Sets initial states for separate random generator
 ##' streams into the .pps environment.
 ##'
 ##' The main argument is the collection of seeds that is in the proper
-##' format. It should be (one element from a "portableSeeds"
-##' object). The function sets the global environment variables
-##' .RandomSeed, currentStream, startStates, and currentStates.
+##' format. It should be a "row" of a "portableSeeds" array object.
+##' The currentStream argument determines which of these is set into
+##' the R environment variable .Random.seed.
 ##'
-##' As originally planned in this package, the suggested method of
-##' setting the seeds is the setSeeds function. That
-##' function receives a run number and a warehouse of seeds created by
-##' seedCreator. \code{setSeeds} will select the
-##' initializing states for the streams from the seed warehouse.
+##' This is different from \code{\link{setSeeds}} because setSeets accepts
+##' the whole parallelSeeds object as input, whereas this function
+##' wants only the input for one run of a simulation.
 ##'
-##' Some specific use cases, particuarly the replication of individual
-##' runs, may be faciliated by this function, which offers a way to
-##' set one seed collection into place.
+##' In some specific use cases, particuarly the replication of individual
+##' runs, it may be easier to use this function rather than setSeeds, but
+##' both achieve the same purpose.
 ##'
-##' @export setSeedCollection
-##' @param runSeeds Required. A list including seeds (vectors of
-##'     initializing values) for the L'Ecuyer-CMRG random generator
+##' @export setSeedVector
+##' @param runSeeds Required. Seeds for the L'Ecuyer-CMRG random generator
 ##' @param currentStream Optional. Integer indicating which of the
 ##'     streams is to be used first. Default = 1.
 ##' @param verbose Optional. Default = FALSE.
@@ -247,18 +254,14 @@ NULL
 ##'     startStates (list), currentStates (list), and currentStream
 ##'     (an integer).
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
-##' @seealso \code{setSeeds} performs the same service, but it does
-##'     the additional work of finding the correct element for a given
-##'     run within a seed collection; \code{seedCreator} to generate
-##'     the a seed collection; \code{useStream} to change from one
-##'     stream to another.
+##' @seealso \code{seedCreator}, \code{setSeeds}, and \code{useStream}.
 ##' @importFrom rockchalk mvrnorm
 ##' @example inst/examples/pps-ex-2.R
-setSeedCollection <- function(runSeeds, currentStream = 1L, verbose = FALSE){
+setSeedVector <- function(runSeeds, currentStream = 1L, verbose = FALSE){
     RNGkind("L'Ecuyer-CMRG")
 
     if (missing(runSeeds)) {
-        stop("setStreamCollection requires a seed object in order to initialize the random streams")
+        stop("setSeedVector requires a seed object in order to initialize the random streams")
     }
 
     ##TODO: find out what checks on the runSeeds elements are necessary.
@@ -267,9 +270,9 @@ setSeedCollection <- function(runSeeds, currentStream = 1L, verbose = FALSE){
     assign("currentStream",  as.integer(currentStream), envir = .pps)
     assign("startStates", runSeeds, envir = .pps)
     assign("currentStates", runSeeds, envir = .pps)
-    assign(".Random.seed", runSeeds[[1L]],  envir = .pps)
+    assign(".Random.seed", runSeeds[[1L]],  envir = .GlobalEnv)
     if (verbose){
-        print(paste("setStreamCollection"))
+        print(paste("setSeedVector"))
         print(.Random.seed)
         print(paste("CurrentStream =", get("currentStream", envir = .pps, inherits = FALSE)))
         print("All Current States")
