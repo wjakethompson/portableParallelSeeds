@@ -1,12 +1,13 @@
 ## Paul E. Johnson CRMDA <pauljohn@ku.edu>
 ## Portable Parallel Seeds Project.
-## 2012-11-15
+## 2016-05-27
 
 ## Trying to develop standard "idioms" for Monte Carlo simulation
 ## of sampling distributions (which is an extremely popular topic
 ## among my students).
 
 library(portableParallelSeeds)
+require(rockchalk)
 
 ## genData uses mvrnorm from portableParallelStreams, which
 ## means that if you re-set the random stream at the origin
@@ -14,7 +15,7 @@ library(portableParallelSeeds)
 ## rows will be the same in each dataframe.
 genData <- function(run, seeds, parm){
     setSeeds(seeds, run = run)
-    dat <- portableParallelStreams::mvrnorm(parm$N, mu = c(0,0), Sigma = diag(2))
+    dat <- rockchalk::mvrnorm(parm$N, mu = c(0,0), Sigma = diag(2))
     dat <- as.data.frame(dat)
     names(dat) <- c("x1", "x2")
     useStream(2)
@@ -100,7 +101,7 @@ head(metaParms)
 
 ## Now we ask for oneBatch for eachrow of parameters
    ## Use option cl.core to choose an appropriate cluster size.
-     cl <- makeCluster(getOption("cl.cores", 2))
+cl <- makeCluster(getOption("cl.cores", 3))
 
 r1 <- apply(metaParms, 1, oneBatch, n = nReps, simFunction = runOneSimulation, seeds = projSeeds)
 
