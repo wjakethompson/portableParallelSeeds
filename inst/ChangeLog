@@ -1,3 +1,9 @@
+2016-05-27  Paul Johnson  <pauljohn@dellap14>
+
+	* examples/paramSweep-1.R (analyzeData): corrected typographical
+	errors caused by previous failed effort to rename package
+	portableParallelStreams
+
 2014-12-22  Paul Johnson  <pauljohn@dellap14>
 
 	* ../DESCRIPTION (Package): import rockchalk

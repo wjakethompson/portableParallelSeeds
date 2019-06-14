@@ -42,6 +42,7 @@
 ##' @return A list that includes "nReps" elements. Each element is a vector of "streamsPerRep" stream starting values.
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##' @import parallel
+##' @importFrom stats runif
 ##' @seealso snowft, streams, parallel
 ##' @references L'Ecuyer, P. (1999). Good Parameters and
 ##' Implementations for Combined Multiple Recursive Random Number

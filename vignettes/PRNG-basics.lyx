@@ -244,8 +244,6 @@ pseudo random number generators
 \series default
 (PRNGs).
  A PRNG generates a stream of numbers in which there is no apparent pattern.
- An outside observer is not supposed to be able to guess what numbers will
- be observed in the future.
  If an outside user can discern the pattern, then a generator is considered
  
 \begin_inset Quotes eld
@@ -255,60 +253,28 @@ broken
 \begin_inset Quotes erd
 \end_inset
 
- and its use in encryption and cryptography is discouraged.
- 
+ and its use is discouraged.
+ The output from each draw from a PRNG should, as much as possible, be indisting
+uishable from an equally likely draw of all possible integers.
+ There should be not cyclic repetitions or trends.
 \end_layout
 
 \begin_layout Standard
-These aren't really random numbers, however.
- Inside the PRNG, there is a vector of values, the 
-\series bold
-internal state
-\series default
- of the generator, which is updated as values are drawn.
- If one has access to the internal state of the PRNG, one can forcast its
- future output with perfect accuracy.
- In PRNG research, it is common to refer to that internal state as the 
-\series bold
-seed
-\series default
- of the PRNG.
- There are many competing PRNG programs.
- The have different (not interchangeable) internal state vectors.
- The differences in the structure of the internal state is one of the most
- striking facts that we gather while looking under the hood of the random
- generator code.
- 
-\end_layout
-
-\begin_layout Standard
-We treat the values emitted from the PRNG as though they are random for
- our stientific purposes.
- We use those numbers as inputs into a second calculation that turns the
- pseudo random numbers into 
+Simulated 
 \series bold
 statistical distributions
 \series default
-, such as the uniform or the normal distribution.
+ are built on top of the output from PRNGS.
+ Designing a function that converts PRNG output to simulated draws from
+ a statistical distribution requires a great deal of care.
+ Some distributions, like the uniform distribution, are easy to simulate,
+ since the PRNG is supposed to create equally likely integers.
+ Some distributions (e.g, the logistic) are almost as easy to derive, while
+ for others (e.g., the gamma distribution) are very difficult.
+ The normal distribution is a on the medium-high end of the difficulty scale.
+ There are several competing proposals at this time, none of which appears
+ to be superior to the others.
  
-\end_layout
-
-\begin_layout Standard
-The conversion from the generator's output into random draws from distributions
- is a large field of study, some distributions are very difficult to simulate.
- The uniform distribution is the only truly easy distribution.
- If the PRNG generates integer values, we simply divide each random integer
- by the largest possible value of the PRNG to obtain equally likely draws
- from the 
-\begin_inset Formula $[0,1]$
-\end_inset
-
- interval.
- It is only slightly more difficult to simulate draws from some distributions
- (e.g, the logistic), while for others (e.g., the gamma distribution) simulation
- is considerably more difficult.
- The normal distribution, which occupies such a central place in statistical
- theory, is an in-between case for which there are several competing proposals.
 \end_layout
 
 \begin_layout Section
@@ -332,7 +298,23 @@ internal state
 \end_layout
 
 \begin_layout Standard
-Applied researchers who use statistical software think of the term 
+Inside the PRNG, there is a vector of values: the 
+\series bold
+internal state
+\series default
+.
+ The internal state is combined with mathematical formula that are used
+ to emit the apparently random numbers.
+ In PRNG research, it is common to refer to that internal state as the 
+\series bold
+seed
+\series default
+ of the PRNG.
+ 
+\end_layout
+
+\begin_layout Standard
+The term 
 \begin_inset Quotes eld
 \end_inset
 
@@ -340,9 +322,11 @@ seed
 \begin_inset Quotes erd
 \end_inset
 
- differently.
- For them, a seed is an integer that starts up a generator in a given state.
- This misunderstanding flows from mis-statements in the documentation.
+ is used differently by applied statistical researchers.
+ To most researchers who are not specialized in PRNGs, a seed is an integer
+ that is used to re-set a random number generator.
+ This misunderstanding flows from mis-statements in the documentation for
+ popular statistical programs.
  For example, the SAS Language Reference states, 
 \begin_inset Quotes eld
 \end_inset
@@ -361,9 +345,6 @@ key "SASLang"
 \end_inset
 
 .
- That's a source of confusion because, in the literature on PRNGs, the term
- seed is not merely a starting point; it is the internal state of a dynamic
- process.
  
 \end_layout
 
@@ -377,27 +358,14 @@ intializing integers.
 \begin_inset Quotes erd
 \end_inset
 
- Here's why.
- The user initializes the random generator by supplying an integer, say
- 12345.
- From that initializing integer, the software creates a unique initial internal
- state of the generator (that which the PRNG literture refers to as a seed).
- The integer 
-\begin_inset Quotes eld
-\end_inset
-
-12345
-\begin_inset Quotes erd
-\end_inset
-
- is never actually the seed, or internal state.
- It is simply an integer that the PRNG program can use to create a much
- more elaborate structure that will govern the random number draws.
+ The seed, as we mentioned, is a vector of numbers that characterize the
+ internal state of a dynamical process of a PRNG.
+ An initializing integer launches that dynamical process.
+ The seed--internal state--is actually a much more complicated thing.
 \end_layout
 
 \begin_layout Standard
-Most R users have encountered the set.seed() function.
- We run, for example, 
+In R, for example, 
 \end_layout
 
 \begin_layout Standard
@@ -449,38 +417,6 @@ set.seed(12345)
 \end_layout
 
 \begin_layout Standard
-Remember, 
-\begin_inset Quotes eld
-\end_inset
-
-12345
-\begin_inset Quotes erd
-\end_inset
-
- is not a 
-\begin_inset Quotes eld
-\end_inset
-
-seed
-\begin_inset Quotes erd
-\end_inset
-
-.
- It is an initializing integer.
- The fact that 
-\begin_inset Quotes eld
-\end_inset
-
-12345
-\begin_inset Quotes erd
-\end_inset
-
- is not actually a seed value becomes instantly apparent when we ask R to
- see the seed itself.
- 
-\end_layout
-
-\begin_layout Standard
 The default PRNG in R is the Mersenne-Twister, commonly known as MT19937
  
 \begin_inset CommandInset citation
@@ -490,7 +426,22 @@ key "matsumoto1998"
 \end_inset
 
 .
- The R internal variable 
+ The Mersenne-Twister was proposed by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "matsumoto1998"
+
+\end_inset
+
+ and, at the current time, it is considered a premier random generator for
+ statistics.
+ It is the default random generator in almost every statistical program
+ (including R, SAS, Matlab, Mplus, among others).
+ 
+\end_layout
+
+\begin_layout Standard
+The R internal variable 
 \begin_inset ERT
 status open
 
@@ -504,9 +455,19 @@ Rcode|.Random.seed|
 \end_inset
 
  is the place where the internal state of the stream is stored.
- Here we have simply grabbed a copy of that internal state and saved it
- as varible s0.
- Here we display only the first 12 values of the internal state of the PRNG.
+ This is the case whether one is using MT19937, or something else.
+ In this example, 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+s0
+\end_layout
+
+\end_inset
+
+is a snapshot of the internal state.
+ We inspect the first 12 values.
  
 \end_layout
 
@@ -542,62 +503,22 @@ s0[1:12]
 \begin_layout Standard
 The first two integer values are internal markers that R uses to remember
  where this random number stream has been.
- The rest of the numbers in the vector are, well, part of the mystery we
- are trying to unravel in this essay.
+ The rest of the numbers in the vector are, well, the internal state of
+ the generator.
  Please take note of the fact that the second value is 624, which will be
  significant when we consider MT19937 in depth.
- 
-\end_layout
-
-\begin_layout Standard
-The Mersenne-Twister was proposed by 
-\begin_inset CommandInset citation
-LatexCommand citet
-key "matsumoto1998"
-
-\end_inset
-
- and, at the current time, it is considered a premier random generator for
- simulations conducted on workstations.
- It is now the default random generator in almost every statistical program
- (including R, SAS, Matlab, Mplus, among others).
- 
-\end_layout
-
-\begin_layout Standard
-In case you wonder, the generator that is currently selected for use in
- R can be revealed by this command,
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
+ Brave R users who run 
+\begin_inset Flex Code
 status open
 
 \begin_layout Plain Layout
-
-<<>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-RNGkind()
-\end_layout
-
-\begin_layout Plain Layout
-
-@
+s0
 \end_layout
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
-The output includes two values, the first is the name of the existing random
- generator.
- The second value is the algorithm that is used to simulate values from
- a normal distribution.
+ will see that there are 624 integers after the number 624.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -614,7 +535,7 @@ In order to understand the way R implements the various PRNGs, and thus
 \begin_layout Standard
 Since we began with the default, MT19937, we might as well work on that
  first.
- Suppose we draw one value from a uniform distribution.
+ Suppose we draw one fresh value from a uniform distribution.
 \end_layout
 
 \begin_layout Standard
@@ -681,8 +602,7 @@ The interesting part is in the first two values.
 
 \begin_layout Itemize
 403.
- This is a value that R uses to indicate which type of generator created
- this particular state vector.
+ This is the R PRNG typology.
  The value 
 \begin_inset Quotes eld
 \end_inset
@@ -701,8 +621,7 @@ The interesting part is in the first two values.
 
  means that the inversion method is used to simulate draws from a normal
  distribution.
- The Mersenne-Twister is the default random generator in R (and most good
- programs, actually).
+ 
 \end_layout
 
 \begin_layout Itemize

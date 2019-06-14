@@ -1,6 +1,6 @@
 ## Paul E. Johnson CRMDA <pauljohn@ku.edu>
 ## Portable Parallel Seeds Project.
-## 2016-05-27
+## 2016-11-30
 
 ## Trying to develop standard "idioms" for Monte Carlo simulation
 ## of sampling distributions (which is an extremely popular topic
@@ -29,7 +29,7 @@ analyzeData <- function(dat, parm){
     m1 <- lm(y ~ x1 + x2, data = dat, model = FALSE)
     c1 <- coef(m1)
     m1sum <- summary(m1)
-    bias <- c1 - unlist(parms[c("b0","b1","b2")])
+    bias <- c1 - unlist(parm[c("b0","b1","b2")])
     bias  <- c(bias, m1sum$sigma - parm[["STDEE"]])
     names(bias) <- c("b0", "b1", "b2", "stdee")
     list("m1" = m1, "m1sum" = m1sum, "bias" = bias)
@@ -99,10 +99,8 @@ metaParms <- expand.grid(N = 999, STDEE = 1, b0 = b0s, b1 = b1s, b2 = b2s)
 ##
 head(metaParms)
 
-## Now we ask for oneBatch for eachrow of parameters
-   ## Use option cl.core to choose an appropriate cluster size.
-cl <- makeCluster(getOption("cl.cores", 3))
 
+## Process the parameters one row at a time.
 r1 <- apply(metaParms, 1, oneBatch, n = nReps, simFunction = runOneSimulation, seeds = projSeeds)
 
 length(r1)
@@ -155,3 +153,22 @@ hist(allRsq[ , 5], main = "metaParams row 5", xlim = R2range, xlab = "Estimated 
 hist(allRsq[ , 19], main = "metaParams row 19", xlim = R2range, xlab = "Estimated R-square")
 hist(allRsq[ , 77], main = "metaParams row 77", xlim = R2range, xlab = "Estimated R-square")
 par(op)
+
+
+
+
+## Now write same using a small cluster on your multi-core computer
+
+cl <- makeCluster(4, type = "SOCK")
+
+clusterExport(cl, c("analyzeData", "genData"))
+
+r2 <- parApply(cl, metaParms, 1, oneBatch, n = nReps, simFunction = runOneSimulation, seeds = projSeeds)
+
+identical(r1[[1]], r2[[1]])
+
+## Key idea here is that we do the cluster work and test on our
+## personal computers, but the step to change to a remote compute
+## cluster is usually simple: Create a submission script and
+## change type to "MPI")
+
