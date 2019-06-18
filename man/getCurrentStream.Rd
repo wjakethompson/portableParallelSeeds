@@ -26,4 +26,3 @@ runif(2)
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-

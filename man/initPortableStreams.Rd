@@ -30,11 +30,10 @@ This is replaced by \code{\link{setSeeds}}, which does exactly the
 same thing, but with a name that is more immediatly understandable
 to users.  This is now deprecated, will be removed.
 }
-\author{
-Paul E. Johnson <pauljohn@ku.edu>
-}
 \seealso{
 \code{\link{setSeeds}} which is the replacement for this
     function.
 }
-
+\author{
+Paul E. Johnson <pauljohn@ku.edu>
+}

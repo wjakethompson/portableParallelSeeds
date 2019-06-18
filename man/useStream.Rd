@@ -42,4 +42,3 @@ numbers follow the proper generator.
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-
