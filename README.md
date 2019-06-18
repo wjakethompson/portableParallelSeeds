@@ -1,0 +1,156 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# portableParallelSeeds
+
+<!-- badges: start -->
+
+<!-- badges: end -->
+
+This is a forked and slightly modified version of Paul Johnson’s
+[portableParallelSeeds](https://github.com/pauljohn32/portableParallelSeeds).
+Namely, these are only the files related to the R package itself for
+each of installation.
+
+## Installation
+
+You can install the released version of portableParallelSeeds from
+[KRAN](http://rweb.crmda.ku.edu/kran)
+with:
+
+``` r
+install.packages("portableParallelSeeds", repos = "http://rweb.crmda.ku.edu/kran")
+```
+
+And the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("remotes")
+remotes::install_github("wjakethompson/portableParallelSeeds")
+```
+
+## Package Use
+
+From the [original
+repository](https://github.com/pauljohn32/portableParallelSeeds):
+
+> This is how I’m going to recommend we work with random number seeds in
+> simulations. It enhances work that requires runs with random numbers,
+> whether runs are in a cluster computing environment or in a single
+> workstation.
+> 
+> It is a solution for two separate problems.
+> 
+> Problem 1. I scripted up 1000 R runs and need high quality, unique,
+> replicable random streams for each one. Each simulation runs
+> separately, but I need to be confident their streams are not
+> correlated or overlapping. For replication, I need to be able to
+> select any run, say 667, and restart it exactly as it was.
+> 
+> Problem 2. I’ve written a Parallel MPI (Message Passing Interface)
+> routine that launches 1000 runs and I need to assure each has a
+> unique, replicatable, random stream. I need to be able to select any
+> run, say 667, and restart it exactly as it was.
+> 
+> This project develops one approach to create replicable simulations.
+> It blends ideas about seed management from John M. Chambers Software
+> for Data Analysis (2008) with ideas from the snowFT package by Hana
+> Sevcikova and Tony R. Rossini.
+> 
+> Here’s my proposal.
+> 
+> 1.  Run a preliminary program to generate an array of seeds
+>     
+>     run1: seed1.1 seed1.2 seed1.3  
+>     run2: seed2.1 seed2.2 seed2.3  
+>     run3: seed3.1 seed3.2 seed3.3  
+>     … … …  
+>     run1000 seed1000.1 seed1000.2 seed1000.3
+>     
+>     This example provides 3 separate streams of random numbers within
+>     each run. Because we will use the L’Ecuyer “many separate streams”
+>     approach, we are confident that there is no correlation or overlap
+>     between any of the runs.
+>     
+>     The projSeeds has to have one row per project, but it is not a
+>     huge file. I created seeds for 2000 runs of a project that
+>     requires 2 seeds per run. The saved size of the file 104443kb,
+>     which is very small. By comparison, a 1400x1050 jpg image would
+>     usually be twice that size. If you save 10,000 runs-worth of
+>     seeds, the size rises to 521,993kb, still pretty small.
+>     
+>     Because the seeds are saved in a file, we are sure each run can be
+>     replicated. We just have to teach each program how to use the
+>     seeds. That is step two.
+> 
+> 2.  Inside each run, an initialization function runs that loads the
+>     seeds file and takes the row of seeds that it needs. As the
+>     simulation progresses, the user can ask for random numbers from
+>     the separate streams. When we need random draws from a particular
+>     stream, we set the variable “currentStream” with the function
+>     useStream().
+>     
+>     The function initSeedStreams creates several objects in the global
+>     environment. It sets the integer currentStream, as well as two
+>     list objects, startSeeds and currentSeeds. At the outset of the
+>     run, startSeeds and currentSeeds are the same thing. When we
+>     change the currentStream to a different stream, the currentSeeds
+>     vector is updated to remember where that stream was when we
+>     stopped drawing numbers from it.
+> 
+> **Question: Why is this approach better for parallel runs?**
+> 
+> Answer: After a batch of simulations, we can re-start any one of them
+> and repeat it exactly. This builds on the idea of the snowFT package,
+> by Hana Sevcikova and A.J. Rossini.
+> 
+> That is different from the default approach of most R parallel
+> designs, including R’s own parallel, RMPI and snow.
+> 
+> The ordinary way of controlling seeds in R parallel would initialize
+> the 50 nodes, and we would lose control over seeds because runs would
+> be repeatedly assigned to nodes. The aim here is to make sure that
+> each particular run has a known starting point. After a batch of
+> 10,000 runs, we can look and say “something funny happened on run
+> 1,323” and then we can bring that back to life later, easily.
+> 
+> **Question: Why is this better than the simple old approach of setting
+> the seeds within each run with a formula like `set.seed(2345 + 10 *
+> run)`**?
+> 
+> Answer: That does allow replication, but it does not assure that each
+> run uses non-overlapping random number streams. It offers absolutely
+> no assurance whatsoever that the runs are actually non-redundant.
+> 
+> Nevertheless, it is a method that is widely used and recommended by
+> some visible HOWTO guides.
+> 
+> Citations
+> 
+> Hana Sevcikova and A. J. Rossini (2010). snowFT: Fault Tolerant Simple
+> Network of Workstations. R package version 1.2-0.
+> <http://CRAN.R-project.org/package=snowFT>
+> 
+> John M Chambers (2008). SoDA: Functions and Exampels for “Software for
+> Data Analysis”. R package version 1.0-3.
+> 
+> John M Chambers (2008) Software for Data Analysis. Springer.
+
+## Git Notes
+
+Because this is a fork of a sub-directory in the [original
+repository](https://github.com/pauljohn32/portableParallelSeeds), it
+took some finagling with git to make everything work. Most of the how-to
+can be found in this [StackOverflow
+answer](https://stackoverflow.com/a/24577293).
+
+To receive upstream commits from the original repository:
+
+    git checkout upstream-master
+    git pull
+    
+    git subtree split --prefix=portableParallelSeeds \
+      --onto upstream-portableParallelSeeds -b upstream-portableParallelSeeds
+      
+    git checkout master
+    git merge upstream-portableParallelSeeds
