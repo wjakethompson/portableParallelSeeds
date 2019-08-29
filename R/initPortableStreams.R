@@ -255,7 +255,6 @@ NULL
 ##'     (an integer).
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##' @seealso \code{seedCreator}, \code{setSeeds}, and \code{useStream}.
-##' @importFrom rockchalk mvrnorm
 ##' @example inst/examples/pps-ex-2.R
 setSeedVector <- function(runSeeds, currentStream = 1L, verbose = FALSE){
     RNGkind("L'Ecuyer-CMRG")
