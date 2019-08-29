@@ -18,6 +18,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+RNGkind("Mersenne-Twister")
 ```
 
 While working on this project, I've gained some insights about terminology and usage of random generators. A brief review may help readers follow along with the presentation.
