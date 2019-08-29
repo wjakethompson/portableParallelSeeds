@@ -1,41 +1,46 @@
 Package: portableParallelSeeds
-Title: Allow Replication of Simulations on Parallel and Serial Computers
+Title: Allow Replication of Simulations on Parallel and Serial
+    Computers
 Version: 0.97
-Authors@R: c(
-    person("Paul E.", "Johnson", email = "pauljohn@ku.edu",
-           role = c("aut", "cre")),
-    person("W. Jake", "Thompson", email = "wjakethompson@gmail.com",
-           role = c("ctb"), comment = c(ORCID = "0000-0001-7339-0300"))
-    )
-Description: Creates seeds for simulation projects.  Uses the L'Eucyer
-    "many separate streams" approach to allow users to create one or
-    more unique streams per simulation run.  Can save, reload, and
-    select among streams of random numbers for arbitrarily many
-    projects.  From a batch of thousands of simulations, one can select
-    any arbitrary "run" of the model and re-initialize it (replicate
-    it) in isolation. The book-keeping work is done in an enviroment
-    called ".pps". This simulation will alter the state of the user
-    session's .RandomSeed variable so as to re-initialize a simulation
-    exactly. This was developed on a Linux cluster for replication of
-    simulations across many compute nodes, but it is also compatible
-    with iteration on a single computer. Includes vignettes to explain
-    some basics of the package and the usage of pseudo-random number
-    generators (PRNG).
-License: GPL (>= 2)
-Encoding: UTF-8
 Date: 2016-05-27
+Authors@R: 
+    c(person(given = "Paul E.",
+             family = "Johnson",
+             role = c("aut", "cre"),
+             email = "pauljohn@ku.edu"),
+      person(given = "W. Jake",
+             family = "Thompson",
+             role = "ctb",
+             email = "wjakethompson@gmail.com",
+             comment = c(ORCID = "0000-0001-7339-0300")))
+Description: Creates seeds for simulation projects.  Uses the
+    L'Eucyer "many separate streams" approach to allow users to create one
+    or more unique streams per simulation run.  Can save, reload, and
+    select among streams of random numbers for arbitrarily many projects.
+    From a batch of thousands of simulations, one can select any arbitrary
+    "run" of the model and re-initialize it (replicate it) in isolation.
+    The book-keeping work is done in an enviroment called ".pps". This
+    simulation will alter the state of the user session's .RandomSeed
+    variable so as to re-initialize a simulation exactly. This was
+    developed on a Linux cluster for replication of simulations across
+    many compute nodes, but it is also compatible with iteration on a
+    single computer. Includes vignettes to explain some basics of the
+    package and the usage of pseudo-random number generators (PRNG).
+License: GPL (>= 2)
 Depends:
     parallel
 Suggests:
     bookdown,
-    SoDA,
     kableExtra,
-    snowFT,
+    knitr,
     MASS,
-    rockchalk,
-    rstream,
     mvtnorm,
     rmarkdown,
+    rockchalk,
+    rstream,
+    snowFT,
+    SoDA
+VignetteBuilder: 
     knitr
+Encoding: UTF-8
 RoxygenNote: 6.1.1
-VignetteBuilder: knitr
