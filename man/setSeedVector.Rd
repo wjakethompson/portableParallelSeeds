@@ -44,21 +44,22 @@ A1 <- projSeeds[[27]]
 A1 ## shows states of 3 generators for one run
 
 ##' Receive a run-specific seed vector and conduct a simulation
-##' 
-##' Rather than giving this function the whole seed warehouse
-##' that is used for all the simulation runs, this one just
-##' receives one vector of seeds. Compare to \\code{\\link{setSeeds}}.
 ##'
-##' This function does not need to know what the run number is, since
-##' it accepts a stream vector as its first argument.  Prehaps this is
-##' a simpler, more elegant approach than in \\code\\link{{setSeeds}}.
-##' @param streams A stream element selected from a "portableSeeds"
-##'     object. Created by \\code\\link{{seedCreator}}
+##' Rather than giving this function the whole seed warehouse that is used for
+##' all the simulation runs, this one just receives one vector of seeds. Compare
+##' to \\code{\\link{setSeeds}}.
+##'
+##' This function does not need to know what the run number is, since it accepts
+##' a stream vector as its first argument.  Prehaps this is a simpler, more
+##' elegant approach than in \\code\\link{{setSeeds}}.
+##' @param streams A stream element selected from a "portableSeeds" object.
+##'   Created by \\code\\link{{seedCreator}}
 ##' @param N Number of rows in simulated data set
 ##' @param m mean of simulated data
 ##' @param sd standard deviation of simulated data
 ##' @param beta regression coefficients
-##' @return A list of estimated regressions fitted to the simulated values, including 3 linear models and one generalized linear model 
+##' @return A list of estimated regressions fitted to the simulated values,
+##'   including 3 linear models and one generalized linear model
 ##' @author Paul Johnson <pauljohn@@ku.edu>
 runOneSimulation <- function(streams, N, m, sd, beta = c(0.3, 0.2, 0.1))
 {
