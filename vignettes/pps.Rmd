@@ -25,8 +25,6 @@ library(portableParallelSeeds)
 library(SoDA)
 library(snowFT)
 
-library(fs)
-library(here)
 library(knitr)
 library(kableExtra)
 ```
@@ -275,7 +273,7 @@ Problem 2. For replication, I need to be able to select any run, and restart it 
 ## References
 
 ```{r write-packages, include = FALSE}
-if (!file_exists("pps-packages.bib")) file.create("pps-packages.bib")
+if (!file.exists("pps-packages.bib")) file.create("pps-packages.bib")
 suppressWarnings(
   knitr::write_bib(c(.packages()), "pps-packages.bib")
 )
