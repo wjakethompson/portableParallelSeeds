@@ -5,7 +5,7 @@ Authors@R: c(
     person("Paul E.", "Johnson", email = "pauljohn@ku.edu",
            role = c("aut", "cre")),
     person("W. Jake", "Thompson", email = "wjakethompson@gmail.com",
-           role = c("aut"), comment = c(ORCID = "0000-0001-7339-0300"))
+           role = c("ctb"), comment = c(ORCID = "0000-0001-7339-0300"))
     )
 Description: Creates seeds for simulation projects.  Uses the L'Eucyer
     "many separate streams" approach to allow users to create one or
@@ -29,5 +29,14 @@ Depends:
 Imports:
     rockchalk
 Suggests:
-    MASS
+    bookdown,
+    SoDA,
+    kableExtra,
+    snowFT,
+    MASS,
+    rstream,
+    mvtnorm,
+    rmarkdown,
+    knitr
 RoxygenNote: 6.1.1
+VignetteBuilder: knitr
